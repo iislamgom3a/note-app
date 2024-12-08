@@ -1,0 +1,72 @@
+'  Tool used to Generate UMl Digram:  https://www.planttext.com/
+
+@startuml
+
+class User {
+    - username: String
+    - password: String
+    - notes: List<Note>
+    + login(username: String, password: String): boolean
+    + addNote(note: Note): void
+    + deleteNote(noteId: int): void
+    + editNote(noteId: int, updatedNote: Note): void
+}
+
+class Note {
+    - noteId: int
+    - title: String
+    - content: String
+    - images: List<Image>
+    - sketches: List<Sketch>
+    + addImage(image: Image): void
+    + addSketch(sketch: Sketch): void
+    + removeImage(imageId: int): void
+    + removeSketch(sketchId: int): void
+    + updateContent(newContent: String): void
+}
+
+class SecureNote {
+    - password: String
+    + setPassword(password: String): void
+    + unlock(password: String): boolean
+}
+
+class Image {
+    - imageId: int
+    - filePath: String
+    + loadImage(filePath: String): void
+}
+
+class Sketch {
+    - sketchId: int
+    - filePath: String
+    + saveSketch(filePath: String): void
+}
+
+class FileManager {
+    - storagePath: String
+    + saveNoteToFile(note: Note): void
+    + loadNotes(user: User): List<Note>
+    + createUserFolder(user: User): void
+}
+
+class GUIManager {
+    - currentUser: User
+    + displayLoginScreen(): void
+    + displayNoteList(user: User): void
+    + displayNoteEditor(note: Note): void
+    + attachImageToNote(noteId: int, image: Image): void
+    + addSketchToNote(noteId: int, sketch: Sketch): void
+}
+
+User "1" o-- "*" Note
+Note "1" *-- "*" Image
+Note "1" *-- "*" Sketch
+SecureNote -|> Note
+FileManager ..> User
+FileManager ..> Note
+GUIManager ..> User
+GUIManager ..> Note
+GUIManager ..> FileManager
+
+@enduml
