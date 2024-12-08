@@ -27,8 +27,10 @@ class Note {
 
 class SecureNote {
     - password: String
+    - unlocked: boolean
     + setPassword(password: String): void
     + unlock(password: String): boolean
+    + lock(): void
 }
 
 class Image {
