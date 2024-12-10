@@ -11,20 +11,30 @@ public class User {
     private String passWord;
     private List<Note> notes;
     HashMap<String, String> map = new HashMap<>();
+    private static String  FILE_NAME = "hashmap.txt";
 
-    public boolean register(String username, String password) {
-        try (ObjectOutputStream stream = new ObjectOutputStream(new FileOutputStream("hashmap.txt"))) {
-            map.put(username, password);
-            stream.writeObject(map);
-            return true;
-        } catch (IOException e) {
-            System.out.println("Failed" + e.getMessage());
-            return false;
-        }
+    public static boolean register (String userName , String password)throws Exception{
+        ObjectInputStream ois = new ObjectInputStream(new FileInputStream(FILE_NAME));
+            @SuppressWarnings("unchecked")
+            HashMap <String,String> map1 = (HashMap<String, String>) ois.readObject();
+            if (!map1.containsKey(userName)) {
+                map1.put(userName, password);
+                ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(FILE_NAME));
+                oos.writeObject(map1);
+                oos.close();
+                ois.close();
+                return true;
+            }
+            else{
+                System.out.println("Username already exists");
+                ois.close();
+                return false;
+            }
+
     }
 
     public boolean logIn(String username, String password) throws ClassNotFoundException {
-        try (ObjectInputStream stream = new ObjectInputStream(new FileInputStream("hashmap.txt"))) {
+        try (ObjectInputStream stream = new ObjectInputStream(new FileInputStream(FILE_NAME))) {
             @SuppressWarnings("unchecked")
             HashMap<String, String> map1 = (HashMap<String, String>) stream.readObject();
             if (map1.containsKey(username)){
@@ -38,6 +48,7 @@ public class User {
             return false;
         }
     }
+    
 
     
 }
