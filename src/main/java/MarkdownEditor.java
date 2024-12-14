@@ -127,6 +127,4 @@ public class MarkdownEditor extends JFrame {
             updatePreview(); // Update preview when switching
         }
     }
-
-
 }
