@@ -82,6 +82,7 @@ public class MarkdownEditor extends JFrame {
     }
 
     // Save markdown to a file
+    // to do: pass a path for the function to save the file at the user's folder
     private void saveToMarkdownFile() {
         String content = textArea.getText();
         try (BufferedWriter writer = new BufferedWriter(new FileWriter("note.md"))) {
