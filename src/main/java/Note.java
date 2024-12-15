@@ -17,4 +17,5 @@ public class Note {
         // call addImage
         // the added sketch isn't editable
     };
+    
 }
