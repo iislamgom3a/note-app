@@ -23,7 +23,7 @@ public class User {
         return null;
     }
 
-    public static void writeHashMapToFile(HashMap<String, String> map, String filePath) {
+    private static void writeHashMapToFile(HashMap<String, String> map, String filePath) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
             for (HashMap.Entry<String, String> entry : map.entrySet()) {
                 writer.write(entry.getKey() + "-->" + entry.getValue());
@@ -34,7 +34,7 @@ public class User {
             System.err.println("Error writing HashMap to file: " + e.getMessage());
         }
     }
-    public static HashMap<String, String> readHashMapFromFile(String filePath) {
+    private static HashMap<String, String> readHashMapFromFile(String filePath) {
         HashMap<String, String> map = new HashMap<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
             String line;
