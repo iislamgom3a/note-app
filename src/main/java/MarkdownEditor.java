@@ -11,11 +11,12 @@ import org.commonmark.parser.Parser;
 import org.commonmark.renderer.html.HtmlRenderer;
 
 public class MarkdownEditor extends JFrame {
-    private JTextArea textArea;
-    private JEditorPane previewPane;
+    
+    private final JTextArea textArea;
+    private final JEditorPane previewPane;
     private boolean isRawMode = true; // Toggle state
-    private JPanel cardPanel;
-    private CardLayout cardLayout;
+    private final JPanel cardPanel;
+    private final CardLayout cardLayout;
 
     public MarkdownEditor() {
         setTitle("Markdown Editor");
@@ -29,7 +30,7 @@ public class MarkdownEditor extends JFrame {
 
         // Create the preview pane
         previewPane = new JEditorPane();
-        previewPane.setContentType("text/html");
+        previewPane.setContentType("text/html");        
         previewPane.setEditable(false); // Read-only for preview
         JScrollPane previewScrollPane = new JScrollPane(previewPane);
 

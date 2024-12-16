@@ -1,4 +1,3 @@
-import java.awt.Color;
 
 import javax.swing.JFrame;
 import java.awt.*;
@@ -6,7 +5,6 @@ import java.awt.*;
 public class GUIManager extends JFrame{
     public GUIManager(){
         setSize(1000, 800);
-
     }
     /*
      - login panel or rejester if the user is not found
