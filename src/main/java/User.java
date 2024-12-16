@@ -52,11 +52,11 @@ public class User {
     }
 
 
-    public  boolean logIn(String userName,String password) throws Exception {
+    public  String logIn(String userName,String password) throws Exception {
         HashMap<String,String> map = readHashMapFromFile(FILE_NAME);
         if (map.containsKey(userName)){
             if (map.get(userName).equals(password)){
-                return true;
+                return "Users\\"+userName;
             }
             else {
                 throw new Exception("Wrong password");

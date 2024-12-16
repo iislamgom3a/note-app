@@ -1,4 +1,5 @@
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
@@ -57,6 +58,7 @@ public class GUIManager {
                 try {
                     if (logIn(userName, password)) {
                         JOptionPane.showMessageDialog(loginFrame, "Login Successful!");
+                        openFolderInFrame(userName); // Open the folder in a new frame
                     }
                 } catch (Exception ex) {
                     JOptionPane.showMessageDialog(loginFrame, "Error: " + ex.getMessage());
@@ -114,6 +116,7 @@ public class GUIManager {
 
                 if (folderPath != null) {
                     JOptionPane.showMessageDialog(registerFrame, "Registered Successfully! Folder: " + folderPath);
+                    openFolderInFrame(userName); // Open the folder in a new frame
                     registerFrame.dispose();
                     createLoginFrame(); // Return to log in frame
                 } else {
@@ -178,7 +181,33 @@ public class GUIManager {
         }
         throw new Exception("Username doesn't exist");
     }
+
+    // Helper method to display folder contents in a JFrame
+    private static void openFolderInFrame(String userName) {
+        String folderPath = "Users\\" + userName;
+        File folder = new File(folderPath);
+
+        if (folder.exists() && folder.isDirectory()) {
+            JFrame folderFrame = new JFrame("Folder: " + userName);
+            folderFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            folderFrame.setSize(500, 400);
+
+            // Get list of files in the folder
+            String[] files = folder.list();
+            if (files == null) files = new String[]{};
+
+            JList<String> fileList = new JList<>(files);
+            JScrollPane scrollPane = new JScrollPane(fileList);
+
+            folderFrame.add(scrollPane);
+            folderFrame.setVisible(true);
+            
+        } else {
+            JOptionPane.showMessageDialog(null, "Folder does not exist: " + folderPath);
+        }
+    }
 }
+
 
 
     /*
