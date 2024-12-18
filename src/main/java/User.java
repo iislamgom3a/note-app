@@ -9,11 +9,11 @@ public class User {
     private static final String  FILE_NAME = "DataBase.txt";
 
     public String register(String userName,String password){
-        HashMap<String,String> map1 = (HashMap<String, String>) readHashMapFromFile(FILE_NAME);
+        HashMap<String,String> map1 = (HashMap<String, String>) readHashMapFromFile();
         String folderPath = "Users\\"+userName;
         if (!map1.containsKey(userName)){
             map1.put(userName,password);
-            writeHashMapToFile(map1,FILE_NAME);
+            writeHashMapToFile(map1);
             File folder = new File(folderPath);
             if (folder.mkdir()) {
                 return folder.getAbsolutePath();
@@ -23,37 +23,30 @@ public class User {
         return null;
     }
 
-    private static void writeHashMapToFile(HashMap<String, String> map, String filePath) {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
-            for (HashMap.Entry<String, String> entry : map.entrySet()) {
-                writer.write(entry.getKey() + "-->" + entry.getValue());
-                writer.newLine();
-            }
-            System.out.println("HashMap has been written to " + filePath);
+    private static void writeHashMapToFile(HashMap<String, String> map) {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(User.FILE_NAME))) {
+            oos.writeObject(map);
+            System.out.println("HashMap has been serialized and written to " + User.FILE_NAME);
         } catch (IOException e) {
-            System.err.println("Error writing HashMap to file: " + e.getMessage());
+            System.err.println("Error serializing HashMap to file: " + e.getMessage());
         }
     }
-    private static HashMap<String, String> readHashMapFromFile(String filePath) {
-        HashMap<String, String> map = new HashMap<>();
-        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                String[] parts = line.split("-->", 2);
-                if (parts.length == 2) {
-                    map.put(parts[0], parts[1]);
-                }
-            }
 
-        } catch (IOException e) {
-            System.err.println("Error reading HashMap from file: " + e.getMessage());
+    private static HashMap<String, String> readHashMapFromFile() {
+        HashMap<String, String> map = null;
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(User.FILE_NAME))) {
+            map = (HashMap<String, String>) ois.readObject();
+            System.out.println("HashMap has been deserialized from " + User.FILE_NAME);
+        } catch (IOException | ClassNotFoundException e) {
+            System.err.println("Error deserializing HashMap from file: " + e.getMessage());
         }
-        return map;
+        return map == null ? new HashMap<>() : map;
     }
 
 
-    public  String logIn(String userName,String password) throws Exception {
-        HashMap<String,String> map = readHashMapFromFile(FILE_NAME);
+
+    public String logIn(String userName,String password) throws Exception {
+        HashMap<String,String> map = readHashMapFromFile();
         if (map.containsKey(userName)){
             if (map.get(userName).equals(password)){
                 return "Users\\"+userName;

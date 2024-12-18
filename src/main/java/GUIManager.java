@@ -13,6 +13,7 @@ public class GUIManager {
     }
 
     private static void createLoginFrame() {
+        User user = new User();
         JFrame loginFrame = new JFrame("Log In");
         loginFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         loginFrame.setSize(400, 300);
@@ -56,10 +57,9 @@ public class GUIManager {
                 String userName = userNameField.getText();
                 String password = new String(passwordField.getPassword());
                 try {
-                    if (logIn(userName, password)) {
-                        JOptionPane.showMessageDialog(loginFrame, "Login Successful!");
-                        openFolderInFrame(userName); // Open the folder in a new frame
-                    }
+                    user.logIn(userName, password);
+                    JOptionPane.showMessageDialog(loginFrame, "Login Successful!");
+                    openFolderInFrame(userName); // Open the folder in a new frame
                 } catch (Exception ex) {
                     JOptionPane.showMessageDialog(loginFrame, "Error: " + ex.getMessage());
                 }
@@ -77,6 +77,7 @@ public class GUIManager {
     }
 
     private static void openRegistrationFrame() {
+        User user = new User();
         JFrame registerFrame = new JFrame("Register");
         registerFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         registerFrame.setSize(400, 250);
@@ -112,13 +113,12 @@ public class GUIManager {
             public void actionPerformed(ActionEvent e) {
                 String userName = userNameField.getText();
                 String password = new String(passwordField.getPassword());
-                String folderPath = register(userName, password);
+                String folderPath = user.register(userName, password);
 
                 if (folderPath != null) {
                     JOptionPane.showMessageDialog(registerFrame, "Registered Successfully! Folder: " + folderPath);
                     openFolderInFrame(userName); // Open the folder in a new frame
                     registerFrame.dispose();
-                    createLoginFrame(); // Return to log in frame
                 } else {
                     JOptionPane.showMessageDialog(registerFrame, "Username already exists!");
                 }
@@ -127,60 +127,6 @@ public class GUIManager {
     }
 
     // Backend methods (same as provided)
-    public static String register(String userName, String password) {
-        HashMap<String, String> map1 = readHashMapFromFile(FILE_NAME);
-        String folderPath = "Users\\" + userName;
-        if (!map1.containsKey(userName)) {
-            map1.put(userName, password);
-            writeHashMapToFile(map1, FILE_NAME);
-            File folder = new File(folderPath);
-            if (folder.mkdir()) {
-                return folder.getAbsolutePath();
-            }
-        }
-        System.out.println("Username already exists");
-        return null;
-    }
-
-    private static void writeHashMapToFile(HashMap<String, String> map, String filePath) {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
-            for (HashMap.Entry<String, String> entry : map.entrySet()) {
-                writer.write(entry.getKey() + "-->" + entry.getValue());
-                writer.newLine();
-            }
-            System.out.println("HashMap has been written to " + filePath);
-        } catch (IOException e) {
-            System.err.println("Error writing HashMap to file: " + e.getMessage());
-        }
-    }
-
-    private static HashMap<String, String> readHashMapFromFile(String filePath) {
-        HashMap<String, String> map = new HashMap<>();
-        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                String[] parts = line.split("-->", 2);
-                if (parts.length == 2) {
-                    map.put(parts[0], parts[1]);
-                }
-            }
-        } catch (IOException e) {
-            System.err.println("Error reading HashMap from file: " + e.getMessage());
-        }
-        return map;
-    }
-
-    public static boolean logIn(String userName, String password) throws Exception {
-        HashMap<String, String> map = readHashMapFromFile(FILE_NAME);
-        if (map.containsKey(userName)) {
-            if (map.get(userName).equals(password)) {
-                return true;
-            } else {
-                throw new Exception("Wrong password");
-            }
-        }
-        throw new Exception("Username doesn't exist");
-    }
 
     // Helper method to display folder contents in a JFrame
     private static void openFolderInFrame(String userName) {
