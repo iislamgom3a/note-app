@@ -1,12 +1,9 @@
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
-import java.util.HashMap;
 
 public class GUIManager {
-    private static final String FILE_NAME = "DataBase.txt";
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(GUIManager::createLoginFrame);

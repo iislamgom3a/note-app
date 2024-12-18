@@ -43,8 +43,6 @@ public class User {
         return map == null ? new HashMap<>() : map;
     }
 
-
-
     public String logIn(String userName,String password) throws Exception {
         HashMap<String,String> map = readHashMapFromFile();
         if (map.containsKey(userName)){
