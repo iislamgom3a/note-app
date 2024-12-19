@@ -3,13 +3,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
 
-public class GUIManager {
+public class GUIManager extends JFrame{
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(GUIManager::createLoginFrame);
-    }
-
-    private static void createLoginFrame() {
+    private static void createLoginFrame  () {
         User user = new User();
         JFrame loginFrame = new JFrame("Log In");
         loginFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
