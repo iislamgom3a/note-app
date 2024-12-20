@@ -8,7 +8,7 @@ public class User {
     private List<Note> notes;
     static final String  FILE_NAME = "DataBase.txt";
 
-    public  String register(String userName,String password) throws Exception {
+    public String register(String userName,String password) throws Exception {
         HashMap<String,String> map1 = new HashMap<>();
         String folderPath = "Users\\"+userName;
         map1 = readHashMapFromFile();
@@ -47,7 +47,7 @@ public class User {
         }
     }
 
-    public static String logIn(String userName,String password) throws Exception {
+    public String logIn(String userName,String password) throws Exception {
         HashMap<String,String> map = readHashMapFromFile();
         if (map.containsKey(userName)){
             if (map.get(userName).equals(password)){
@@ -65,7 +65,7 @@ public class User {
         return password != null && password.matches(passwordPattern);
     }
 
-    private static void writeEmptyHashMapToFile() throws Exception {
+    public  void writeEmptyHashMapToFile() throws Exception {
         HashMap<String, String> emptyMap = new HashMap<>();
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(User.FILE_NAME))) {
             oos.writeObject(emptyMap);
@@ -74,4 +74,5 @@ public class User {
             throw new Exception("Error writing empty HashMap to file: " + e.getMessage(), e);
         }
     }
+
 }
