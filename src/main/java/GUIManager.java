@@ -106,7 +106,12 @@ public class GUIManager extends JFrame{
             public void actionPerformed(ActionEvent e) {
                 String userName = userNameField.getText();
                 String password = new String(passwordField.getPassword());
-                String folderPath = user.register(userName, password);
+                String folderPath = null;
+                try {
+                    folderPath = user.register(userName, password);
+                } catch (Exception ex) {
+                    throw new RuntimeException(ex);
+                }
 
                 if (folderPath != null) {
                     JOptionPane.showMessageDialog(registerFrame, "Registered Successfully! Folder: " + folderPath);
