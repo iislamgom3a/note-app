@@ -3,8 +3,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public class User {
-    private static String userName;
-    private String passWord;
+
     private List<Note> notes;
     static final String  FILE_NAME = "DataBase.txt";
 
@@ -63,16 +62,6 @@ public class User {
     private static boolean isValidPassword(String password) {
         String passwordPattern = "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[@#$%^&+=!]).{8,}$";
         return password != null && password.matches(passwordPattern);
-    }
-
-    public  void writeEmptyHashMapToFile() throws Exception {
-        HashMap<String, String> emptyMap = new HashMap<>();
-        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(User.FILE_NAME))) {
-            oos.writeObject(emptyMap);
-            System.out.println("An empty HashMap has been written to " + User.FILE_NAME);
-        } catch (IOException e) {
-            throw new Exception("Error writing empty HashMap to file: " + e.getMessage(), e);
-        }
     }
 
 }
