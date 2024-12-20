@@ -30,22 +30,35 @@
             <artifactId>AbsoluteLayout</artifactId>
             <version>RELEASE230</version>
         </dependency>
+
+        <dependency>
+    <groupId>com.formdev</groupId>
+    <artifactId>flatlaf</artifactId>
+    <version>3.1</version>
+</dependency>
+
+<dependency>
+    <groupId>com.formdev</groupId>
+    <artifactId>flatlaf-intellij-themes</artifactId>
+    <version>3.1</version>
+</dependency>
+
     </dependencies>
 
 
-    <build>
-        <plugins>
-            <plugin>
-                <?m2e execute onConfiguration?>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>23</source>
-                    <target>23</target>
-                    <compilerArgs>--enable-preview</compilerArgs>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
+ <build>
+    <plugins>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <version>3.13.0</version> <!-- Specify a version -->
+            <configuration>
+                <source>23</source> <!-- Replace with your desired Java version -->
+                <target>23</target>
+            </configuration>
+        </plugin>
+    </plugins>
+</build>
+
 
 </project>
