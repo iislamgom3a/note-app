@@ -1,20 +1,33 @@
-import java.io.*;
-import java.util.HashMap;
-
+//import javax.swing.*;
+//import java.io.File;
+//
 public class Anas {
-    private static final String  FILE_NAME = "DataBase.txt";
-    public static void main(String[] args) throws Exception {
-        writeEmptyHashMapToFile();
+    public static void main(String[] args) {
+        User user = new User();
+        user.writeEmptyHashMapToFile();
     }
-
-    private static void writeEmptyHashMapToFile() throws Exception {
-        HashMap<String, String> emptyMap = new HashMap<>();
-        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(User.FILE_NAME))) {
-            oos.writeObject(emptyMap);
-            System.out.println("An empty HashMap has been written to " + User.FILE_NAME);
-        } catch (IOException e) {
-            throw new Exception("Error writing empty HashMap to file: " + e.getMessage(), e);
-        }
-    }
-
 }
+
+//private static void openFolderInFrame(String userName) {
+//    String folderPath = "Users\\" + userName;
+//    File folder = new File(folderPath);
+//
+//    if (folder.exists() && folder.isDirectory()) {
+//        JFrame folderFrame = new JFrame("Folder: " + userName);
+//        folderFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+//        folderFrame.setSize(500, 400);
+//
+//        // Get list of files in the folder
+//        String[] files = folder.list();
+//        if (files == null) files = new String[]{};
+//
+//        JList<String> fileList = new JList<>(files);
+//        JScrollPane scrollPane = new JScrollPane(fileList);
+//
+//        folderFrame.add(scrollPane);
+//        folderFrame.setVisible(true);
+//
+//    } else {
+//        JOptionPane.showMessageDialog(null, "Folder does not exist: " + folderPath);
+//    }
+//}

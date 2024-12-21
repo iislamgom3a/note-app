@@ -7,12 +7,12 @@ public class User {
     private List<Note> notes;
     static final String  FILE_NAME = "DataBase.txt";
 
-    public String register(String userName,String password) throws Exception {
+    public String register(String userName,String password,String password1) throws Exception {
         HashMap<String,String> map1 = new HashMap<>();
         String folderPath = "Users\\"+userName;
         map1 = readHashMapFromFile();
         if (!map1.containsKey(userName)) {
-            if (!isValidPassword(password)) {
+            if (!validateAndComparePasswords(password,password1)) {
                 throw new Exception("Valid password");
             }
             map1.put(userName, password);
@@ -59,9 +59,49 @@ public class User {
         throw new Exception("Username don't exist");
     }
 
-    private static boolean isValidPassword(String password) {
+
+
+    public void writeEmptyHashMapToFile() {
+
+        HashMap<String, String> emptyHashMap = new HashMap<>();
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(FILE_NAME))) {
+            oos.writeObject(emptyHashMap);
+            System.out.println("Empty HashMap written to file successfully.");
+        } catch (IOException e) {
+            System.err.println("Error writing HashMap to file: " + e.getMessage());
+        }
+    }
+
+    public static boolean validateAndComparePasswords(String password1, String password2) {
+        // Password validation pattern
         String passwordPattern = "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[@#$%^&+=!]).{8,}$";
-        return password != null && password.matches(passwordPattern);
+
+        // Validate that neither password is null
+        if (password1 == null || password2 == null) {
+            System.out.println("Passwords cannot be null.");
+            return false;
+        }
+
+        // Validate the first password
+        if (!password1.matches(passwordPattern)) {
+            System.out.println("First password does not meet security criteria.");
+            return false;
+        }
+
+        // Validate the second password
+        if (!password2.matches(passwordPattern)) {
+            System.out.println("Second password does not meet security criteria.");
+            return false;
+        }
+
+        // Check if both passwords are the same
+        if (password1.equals(password2)) {
+            System.out.println("Passwords match and are valid.");
+            return true;
+        } else {
+            System.out.println("Passwords do not match.");
+            return false;
+        }
     }
 
 }
