@@ -1,6 +1,7 @@
 
-import javax.swing.SwingUtilities;
-
+import javax.swing.*;
+import javax.swing.JFrame;
+import java.awt.event.ActionEvent;
 
 
 public class LoginFrame extends javax.swing.JFrame  {
@@ -20,7 +21,7 @@ public class LoginFrame extends javax.swing.JFrame  {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
-
+        User user = new User();
         jColorChooser1 = new javax.swing.JColorChooser();
         jLayeredPane1 = new javax.swing.JLayeredPane();
         jRadioButtonMenuItem1 = new javax.swing.JRadioButtonMenuItem();
@@ -54,12 +55,12 @@ public class LoginFrame extends javax.swing.JFrame  {
         loginButton = new javax.swing.JButton();
         passwordFiled = new javax.swing.JPasswordField();
         jScrollPane2 = new javax.swing.JScrollPane();
-        userNameTextArea = new javax.swing.JTextArea();
+        userNameTextField = new javax.swing.JTextField();
         usernameLabel = new java.awt.Label();
         logo3 = new java.awt.Label();
         welcomeLabel = new java.awt.Label();
         showPasswordToggle = new javax.swing.JToggleButton();
-        RegisterButton = new java.awt.Label();
+        RegisterButton = new javax.swing.JButton();
 
         javax.swing.GroupLayout jLayeredPane1Layout = new javax.swing.GroupLayout(jLayeredPane1);
         jLayeredPane1.setLayout(jLayeredPane1Layout);
@@ -208,18 +209,26 @@ public class LoginFrame extends javax.swing.JFrame  {
 
         loginButton.setText("Log In");
         loginButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                loginButtonActionPerformed(evt);
+
+            public void actionPerformed(ActionEvent e) {
+                String userName = userNameTextField.getText();
+                String password = new String(passwordFiled.getPassword());
+                try {
+                    user.logIn(userName, password);
+                    JOptionPane.showMessageDialog(null, "Login Successful!");
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(null, "Error: " + ex.getMessage());
+                }
             }
         });
 
-        passwordFiled.setText("Password");
+        passwordFiled.setText("");
 
-        userNameTextArea.setColumns(20);
-        userNameTextArea.setRows(5);
-        userNameTextArea.setText("User Name");
-        userNameTextArea.setAutoscrolls(false);
-        jScrollPane2.setViewportView(userNameTextArea);
+        userNameTextField.setColumns(20);
+//        userNameTextField.setRows(5);
+        userNameTextField.setText("");
+        userNameTextField.setAutoscrolls(false);
+        jScrollPane2.setViewportView(userNameTextField);
 
         usernameLabel.setAlignment(java.awt.Label.CENTER);
         usernameLabel.setName("logo"); // NOI18N
@@ -247,7 +256,11 @@ public class LoginFrame extends javax.swing.JFrame  {
         RegisterButton.setText("I don't have Account");
         RegisterButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                RegisterButtonMouseClicked(evt);
+            dispose();
+
+    // Create and show the register frame
+    RegisterFrame registerFrame = new RegisterFrame();
+    registerFrame.setVisible(true);
             }
         });
 
@@ -365,7 +378,7 @@ public class LoginFrame extends javax.swing.JFrame  {
     
    
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private java.awt.Label RegisterButton;
+    protected static javax.swing.JButton  RegisterButton;
     private javax.swing.JColorChooser jColorChooser1;
     private javax.swing.JColorChooser jColorChooser2;
     private javax.swing.JColorChooser jColorChooser3;
@@ -401,7 +414,7 @@ public class LoginFrame extends javax.swing.JFrame  {
     private java.awt.Label programNameLabel1;
     private javax.swing.JToggleButton showPasswordToggle;
     private java.awt.TextField textField1;
-    private javax.swing.JTextArea userNameTextArea;
+    private javax.swing.JTextField userNameTextField;
     private java.awt.Label usernameLabel;
     private java.awt.Label welcomeLabel;
     // End of variables declaration//GEN-END:variables
