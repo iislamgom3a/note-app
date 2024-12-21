@@ -74,5 +74,4 @@ public class User {
             throw new Exception("Error writing empty HashMap to file: " + e.getMessage(), e);
         }
     }
-
 }
