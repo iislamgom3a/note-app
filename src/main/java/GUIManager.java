@@ -16,7 +16,7 @@ public class GUIManager {
         user = new User();
         loginActions();
         RegisterActions();
-
+        editorFrameActions();
     }
     // login Actions
     private void loginActions() {
@@ -38,6 +38,7 @@ public class GUIManager {
                 try {
                     String userPath = user.logIn(userName, password);
                     JOptionPane.showMessageDialog(null, "Login Successful!");
+                    showEditorFrame();
                 } catch (Exception ex) {
                     JOptionPane.showMessageDialog(null, "Error: " + ex.getMessage());
                 }
@@ -75,7 +76,8 @@ public class GUIManager {
             }
         });
     }
-    // Editor Actions
+
+    // Editor Frame Actions
     private void editorFrameActions(){
         editorFrame.logOutButton.addActionListener(new java.awt.event.ActionListener() {
             @Override
@@ -90,6 +92,23 @@ public class GUIManager {
                 showSketchFrame();
             }
         });
+        editorFrame.addNoteButton.addActionListener(new java.awt.event.ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // to do
+            }
+        });
+        editorFrame.addImageButton.addActionListener(new java.awt.event.ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // to do
+            }
+        });
+
+    }
+
+    private void sketchFrameActions(){
+
     }
 
     public void showLoginFrame() {

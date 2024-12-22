@@ -30,7 +30,10 @@ public class EditorFrame extends javax.swing.JFrame {
         // Create the text area for raw markdown
         textArea = new JTextArea();
         textArea.setEditable(true);
+        textArea.setMargin(new Insets(10, 10, 10, 10));
+
         JScrollPane textScrollPane = new JScrollPane(textArea);
+        textScrollPane.setPreferredSize(new Dimension(800, 600));
 
         // Create the preview pane
         previewPane = new JEditorPane();
@@ -89,6 +92,26 @@ public class EditorFrame extends javax.swing.JFrame {
             e.printStackTrace();
         }
     }
+    private void addImageToMarkdown() {
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Select an Image");
+        fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("Image Files", "jpg", "png", "gif", "bmp"));
+
+        int userSelection = fileChooser.showOpenDialog(this);
+        if (userSelection == JFileChooser.APPROVE_OPTION) {
+            String imagePath = fileChooser.getSelectedFile().getAbsolutePath();
+            String markdownImage = String.format("![Image](%s)", imagePath);
+
+            // Insert the image markdown at the current cursor position
+            int cursorPosition = textArea.getCaretPosition();
+            textArea.insert(markdownImage, cursorPosition);
+
+            // Optionally, switch to preview mode to show the added image
+            if (!isRawMode) {
+                updatePreview();
+            }
+        }
+    }
 
     private void updatePreview() {
         String rawMarkdown = textArea.getText();
@@ -120,6 +143,7 @@ public class EditorFrame extends javax.swing.JFrame {
         }
     }
 
+
     private void initComponents() {
         editorPanel = new javax.swing.JPanel();
         notesPanel = new javax.swing.JPanel();
@@ -130,6 +154,7 @@ public class EditorFrame extends javax.swing.JFrame {
         addImageButton = new javax.swing.JButton();
         addSketchButton = new javax.swing.JButton();
         toggleButton = new javax.swing.JButton("Switch to Preview Mode");
+        addNoteButton = new javax.swing.JButton(); // New button
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
@@ -140,7 +165,7 @@ public class EditorFrame extends javax.swing.JFrame {
         editorPanel.setLayout(editorPanelLayout);
         editorPanelLayout.setHorizontalGroup(
                 editorPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGap(0, 1011, Short.MAX_VALUE)
+                        .addGap(0, 911, Short.MAX_VALUE) // Reduced width to accommodate larger notes panel
         );
         editorPanelLayout.setVerticalGroup(
                 editorPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -160,6 +185,7 @@ public class EditorFrame extends javax.swing.JFrame {
         notesListPane.setViewportView(notesList);
 
         logOutButton.setText("Log Out");
+        addNoteButton.setText("Add Note"); // Set text for new button
 
         javax.swing.GroupLayout notesPanelLayout = new javax.swing.GroupLayout(notesPanel);
         notesPanel.setLayout(notesPanelLayout);
@@ -170,10 +196,12 @@ public class EditorFrame extends javax.swing.JFrame {
                                         .addGroup(notesPanelLayout.createSequentialGroup()
                                                 .addGap(14, 14, 14)
                                                 .addGroup(notesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                                        .addComponent(notesListPane, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                        .addComponent(notesLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                                        .addComponent(notesListPane, javax.swing.GroupLayout.PREFERRED_SIZE, 265, javax.swing.GroupLayout.PREFERRED_SIZE) // Increased width
+                                                        .addComponent(notesLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 261, javax.swing.GroupLayout.PREFERRED_SIZE)))
                                         .addGroup(notesPanelLayout.createSequentialGroup()
                                                 .addGap(47, 47, 47)
+                                                .addComponent(addNoteButton, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addGap(20, 20, 20)
                                                 .addComponent(logOutButton, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)))
                                 .addContainerGap(10, Short.MAX_VALUE))
         );
@@ -185,7 +213,9 @@ public class EditorFrame extends javax.swing.JFrame {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(notesListPane, javax.swing.GroupLayout.PREFERRED_SIZE, 621, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(logOutButton)
+                                .addGroup(notesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(addNoteButton)
+                                        .addComponent(logOutButton))
                                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -199,7 +229,7 @@ public class EditorFrame extends javax.swing.JFrame {
         layout.setHorizontalGroup(
                 layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(layout.createSequentialGroup()
-                                .addComponent(notesPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(notesPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE) // Increased preferred width
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                         .addGroup(layout.createSequentialGroup()
@@ -233,12 +263,15 @@ public class EditorFrame extends javax.swing.JFrame {
         pack();
     }
 
+
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(() -> new EditorFrame().setVisible(true));
     }
 
+
     protected javax.swing.JButton addImageButton;
     protected javax.swing.JButton addSketchButton;
+    protected javax.swing.JButton addNoteButton; // New button declaration
     private javax.swing.JPanel editorPanel;
     private javax.swing.JLabel notesLabel;
     protected javax.swing.JList<String> notesList;

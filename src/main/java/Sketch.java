@@ -14,8 +14,8 @@ public class Sketch extends JFrame {
 
     public Sketch() {
         // Initialize the JFrame
-        setTitle("Hand Drawing App");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setTitle("AnnotateIt");
+        setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         setLayout(new BorderLayout());
 
         // Initialize drawing variables
@@ -107,9 +107,7 @@ public class Sketch extends JFrame {
             }
         });
         controlPanel.add(saveButton);
-
         add(controlPanel, BorderLayout.SOUTH);
-
         pack();
         setLocationRelativeTo(null);
     }

@@ -1,4 +1,5 @@
 import java.io.*;
+import java.security.MessageDigest;
 import java.util.HashMap;
 import java.util.List;
 
@@ -7,128 +8,114 @@ class PasswordException extends Exception {
         super(message);
     }
 }
+
 class WeakPasswordException extends Exception {
     public WeakPasswordException(String message) {
         super(message);
     }
 }
 
-
 public class User {
 
-    private List<Note> notes;
-    static final String  FILE_NAME = "DataBase.txt";
-    public String register(String userName, String password, String password1) throws PasswordException, WeakPasswordException {
-        HashMap<String, String> map1 = new HashMap<>();
-        String folderPath = "Users\\" + userName;
-        map1 = readHashMapFromFile();
+    private List<Note> notes; // Assuming Note is another class in your project
+    static final String FILE_NAME = "DataBase.txt";
+    protected static final String USER_FOLDER_PATH = "P:\\codeRepo\\noteTakingApp\\Users";
 
-        if (!map1.containsKey(userName)) {
-            // Check if the passwords match
-            if (!password.equals(password1)) {
-                throw new PasswordException("Passwords do not match!");
-            }
+    public String register(String userName, String password, String password1) throws PasswordException, WeakPasswordException, Exception {
+        HashMap<String, String> userDatabase = readHashMapFromFile();
 
-            // Check for weak password (example: length < 8, no numbers, etc.)
-            if (password.length() < 8 || !password.matches(".*\\d.*") || !password.matches(".*[a-zA-Z].*")) {
-                throw new WeakPasswordException("Password is too weak! It must be at least 8 characters long and contain both letters and numbers.");
-            }
+        if (userDatabase.containsKey(userName)) {
+            throw new Exception("Username already exists.");
+        }
 
-            map1.put(userName, password);
-            writeHashMapToFile(map1);
-            File folder = new File(folderPath);
-            if (folder.mkdir()) {
-                return folder.getAbsolutePath();
+        if (!password.equals(password1)) {
+            throw new PasswordException("Passwords do not match!");
+        }
+
+        if (!isPasswordValid(password)) {
+            throw new WeakPasswordException("Password is too weak! It must be at least 8 characters long, contain both upper and lower case letters, a number, and a special character.");
+        }
+
+        String hashedPassword = hashPassword(password);
+        userDatabase.put(userName, hashedPassword);
+        writeHashMapToFile(userDatabase);
+
+        String userFolderPath = USER_FOLDER_PATH + File.separator + userName;
+        File userFolder = new File(userFolderPath);
+        if (userFolder.mkdir()) {
+            return userFolder.getAbsolutePath();
+        } else {
+            throw new Exception("Failed to create user folder.");
+        }
+    }
+
+    public String logIn(String userName, String password) throws Exception {
+        if (userName == null || userName.isEmpty()) {
+            throw new Exception("Username cannot be empty.");
+        }
+
+        if (password == null || password.isEmpty()) {
+            throw new Exception("Password cannot be empty.");
+        }
+
+        HashMap<String, String> userDatabase = readHashMapFromFile();
+
+        if (userDatabase.containsKey(userName)) {
+            String storedHash = userDatabase.get(userName);
+            if (storedHash.equals(hashPassword(password))) {
+                return userName;
+            } else {
+                throw new Exception("Invalid credentials.");
             }
         }
-        System.out.println("Username already exists");
-        return null;
+        throw new Exception("User not found.");
     }
 
     private static HashMap<String, String> readHashMapFromFile() {
         HashMap<String, String> map = new HashMap<>();
-        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(User.FILE_NAME))) {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(FILE_NAME))) {
             map = (HashMap<String, String>) ois.readObject();
-            System.out.println("HashMap has been deserialized from " + User.FILE_NAME);
+        } catch (FileNotFoundException e) {
+            System.out.println("Database file not found. A new one will be created.");
         } catch (IOException | ClassNotFoundException e) {
-            System.err.println("Error deserializing HashMap from file: " + e.getMessage());
+            System.err.println("Error reading database file: " + e.getMessage());
         }
         return map == null ? new HashMap<>() : map;
     }
 
     private static void writeHashMapToFile(HashMap<String, String> map) {
-        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(User.FILE_NAME))) {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(FILE_NAME))) {
             oos.writeObject(map);
-            System.out.println("HashMap has been serialized and written to " + User.FILE_NAME);
+            System.out.println("Database updated successfully.");
         } catch (IOException e) {
-            System.err.println("Error serializing HashMap to file: " + e.getMessage());
+            System.err.println("Error writing to database file: " + e.getMessage());
         }
     }
 
-    public String logIn(String userName, String password) throws Exception {
-        // Check for empty fields
-        if (userName == null || userName.isEmpty()) {
-            throw new Exception("Username cannot be empty");
-        }
-        if (password == null || password.isEmpty()) {
-            throw new Exception("Password cannot be empty");
-        }
-
-        HashMap<String, String> map = readHashMapFromFile();
-
-        if (map.containsKey(userName)) {
-            if (map.get(userName).equals(password)) {
-                return "Users\\" + userName;
-            } else {
-                throw new Exception("Wrong password");
-            }
-        }
-        throw new Exception("Username doesn't exist");
+    public static boolean isPasswordValid(String password) {
+        String passwordPattern = "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[@#$%^&+=!]).{8,}$";
+        return password != null && password.matches(passwordPattern);
     }
 
-
-
+    public static String hashPassword(String password) throws Exception {
+        MessageDigest md = MessageDigest.getInstance("SHA-256");
+        byte[] hash = md.digest(password.getBytes("UTF-8"));
+        StringBuilder hexString = new StringBuilder();
+        for (byte b : hash) {
+            String hex = Integer.toHexString(0xff & b);
+            if (hex.length() == 1) hexString.append('0');
+            hexString.append(hex);
+        }
+        return hexString.toString();
+    }
 
     public void writeEmptyHashMapToFile() {
-
         HashMap<String, String> emptyHashMap = new HashMap<>();
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(FILE_NAME))) {
             oos.writeObject(emptyHashMap);
-            System.out.println("Empty HashMap written to file successfully.");
+            System.out.println("Empty database created successfully.");
         } catch (IOException e) {
-            System.err.println("Error writing HashMap to file: " + e.getMessage());
-        }
-    }
-
-    public static boolean validateAndComparePasswords(String password1, String password2) {
-        // Password validation pattern
-        String passwordPattern = "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[@#$%^&+=!]).{8,}$";
-
-        // Validate that neither password is null
-        if (password1 == null || password2 == null) {
-            System.out.println("Passwords cannot be null.");
-            return false;
-        }
-
-        // Validate the first password
-        if (!password1.matches(passwordPattern)) {
-            System.out.println("First password does not meet security criteria.");
-            return false;
-        }
-
-        // Validate the second password
-        if (!password2.matches(passwordPattern)) {
-            System.out.println("Second password does not meet security criteria.");
-            return false;
-        }
-
-        // Check if both passwords are the same
-        if (password1.equals(password2)) {
-            System.out.println("Passwords match and are valid.");
-            return true;
-        } else {
-            System.out.println("Passwords do not match.");
-            return false;
+            System.err.println("Error writing empty database file: " + e.getMessage());
         }
     }
 }

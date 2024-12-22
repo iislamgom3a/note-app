@@ -11,32 +11,12 @@ public class LoginFrame extends javax.swing.JFrame  {
         setLocationRelativeTo(null);
     }
 
-    @SuppressWarnings("unchecked")
     private void initComponents() {
-        jColorChooser1 = new javax.swing.JColorChooser();
         jLayeredPane1 = new javax.swing.JLayeredPane();
         jRadioButtonMenuItem1 = new javax.swing.JRadioButtonMenuItem();
         jRadioButtonMenuItem2 = new javax.swing.JRadioButtonMenuItem();
-        jPopupMenu1 = new javax.swing.JPopupMenu();
         jFrame1 = new javax.swing.JFrame();
-        jDialog1 = new javax.swing.JDialog();
-        jDialog2 = new javax.swing.JDialog();
-        jColorChooser2 = new javax.swing.JColorChooser();
-        jColorChooser3 = new javax.swing.JColorChooser();
-        jPanel1 = new javax.swing.JPanel();
-        jPanel2 = new javax.swing.JPanel();
-        jPanel3 = new javax.swing.JPanel();
-        jTabbedPane1 = new javax.swing.JTabbedPane();
-        jFileChooser1 = new javax.swing.JFileChooser();
-        jFileChooser2 = new javax.swing.JFileChooser();
-        jFileChooser3 = new javax.swing.JFileChooser();
-        jFileChooser4 = new javax.swing.JFileChooser();
         textField1 = new java.awt.TextField();
-        jPanel4 = new javax.swing.JPanel();
-        jPanel5 = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jDialog3 = new javax.swing.JDialog();
-        popupMenu1 = new java.awt.PopupMenu();
         logoPanel = new javax.swing.JPanel();
         programNameLabel1 = new java.awt.Label();
         loginPanel = new javax.swing.JPanel();
@@ -46,7 +26,7 @@ public class LoginFrame extends javax.swing.JFrame  {
         userNameTextField = new javax.swing.JTextField();
         usernameLabel = new java.awt.Label();
         logo3 = new java.awt.Label();
-        welcomeLabel = new java.awt.Label();
+        Label welcomeLabel = new Label();
         showPasswordToggle = new javax.swing.JToggleButton();
         RegisterButton = new javax.swing.JButton();
 
@@ -245,40 +225,20 @@ public class LoginFrame extends javax.swing.JFrame  {
    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     protected static javax.swing.JButton  RegisterButton;
-    private javax.swing.JColorChooser jColorChooser1;
-    private javax.swing.JColorChooser jColorChooser2;
-    private javax.swing.JColorChooser jColorChooser3;
-    private javax.swing.JDialog jDialog1;
-    private javax.swing.JDialog jDialog2;
-    private javax.swing.JDialog jDialog3;
-    private javax.swing.JFileChooser jFileChooser1;
-    private javax.swing.JFileChooser jFileChooser2;
-    private javax.swing.JFileChooser jFileChooser3;
-    private javax.swing.JFileChooser jFileChooser4;
     private javax.swing.JFrame jFrame1;
     private javax.swing.JLayeredPane jLayeredPane1;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
-    private javax.swing.JPanel jPanel4;
-    private javax.swing.JPanel jPanel5;
-    private javax.swing.JPopupMenu jPopupMenu1;
     private javax.swing.JRadioButtonMenuItem jRadioButtonMenuItem1;
     private javax.swing.JRadioButtonMenuItem jRadioButtonMenuItem2;
-    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTabbedPane jTabbedPane1;
     protected javax.swing.JButton loginButton;
     private javax.swing.JPanel loginPanel;
     private java.awt.Label logo3;
     private javax.swing.JPanel logoPanel;
     protected javax.swing.JPasswordField passwordFiled;
-    private java.awt.PopupMenu popupMenu1;
     private java.awt.Label programNameLabel1;
     private javax.swing.JToggleButton showPasswordToggle;
     private java.awt.TextField textField1;
     protected javax.swing.JTextField userNameTextField;
     private java.awt.Label usernameLabel;
-    private java.awt.Label welcomeLabel;
     // End of variables declaration//GEN-END:variables
 }

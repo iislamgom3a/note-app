@@ -3,14 +3,30 @@ import java.util.List;
 public class Note {
     private int noteID;
     private String title;
-    public Note(){
-        // at a GUI component to show the title of the note separately
+
+    // Constructor with parameters
+    public Note(int noteID, String title) {
+        this.noteID = noteID;
+        this.title = title;
     }
-    public void addImage(){
-        
-    };
-    public void addSketch(){
-        
-    };
-    
+
+    // Getter for noteID
+    public int getNoteID() {
+        return noteID;
+    }
+
+    // Setter for noteID
+    public void setNoteID(int noteID) {
+        this.noteID = noteID;
+    }
+
+    // Getter for title
+    public String getTitle() {
+        return title;
+    }
+
+    // Setter for title
+    public void setTitle(String title) {
+        this.title = title;
+    }
 }

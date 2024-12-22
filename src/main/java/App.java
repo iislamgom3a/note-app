@@ -4,6 +4,7 @@ public class App {
         GUIManager guiManager = new GUIManager();
         // Show the login frame initially
         guiManager.showLoginFrame();
+        //guiManager.showSketchFrame();
     }
 }
 // finished : don't modify it
