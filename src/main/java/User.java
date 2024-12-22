@@ -3,6 +3,7 @@ import java.security.MessageDigest;
 import java.util.HashMap;
 import java.util.List;
 
+
 class PasswordException extends Exception {
     public PasswordException(String message) {
         super(message);
@@ -16,8 +17,9 @@ class WeakPasswordException extends Exception {
 }
 
 public class User {
+    protected static String userName;
 
-    private List<Note> notes; // Assuming Note is another class in your project
+    protected List<SecureNote> notes; // Assuming Note is another class in your project
     static final String FILE_NAME = "DataBase.txt";
     protected static final String USER_FOLDER_PATH = "P:\\codeRepo\\noteTakingApp\\Users";
 
@@ -39,6 +41,7 @@ public class User {
         String hashedPassword = hashPassword(password);
         userDatabase.put(userName, hashedPassword);
         writeHashMapToFile(userDatabase);
+        this.userName = userName;
 
         String userFolderPath = USER_FOLDER_PATH + File.separator + userName;
         File userFolder = new File(userFolderPath);
@@ -47,6 +50,7 @@ public class User {
         } else {
             throw new Exception("Failed to create user folder.");
         }
+        // txt file for saving (titles, passwords) hash:
     }
 
     public String logIn(String userName, String password) throws Exception {

@@ -1,12 +1,16 @@
 public class SecureNote extends Note{
     private String password;
     private boolean unlocked;
-
-    public SecureNote(int noteID, String title) {
-        super(noteID, title);
+    public SecureNote( String title) {
+        super(title);
     }
-
-    public void setPassword(String password){
-        
+    // method: ceate note:
+    // title, password
+    public String setPassword(String password){
+        return password;
+    }
+public static boolean isPasswordValid(String password) {
+    String passwordPattern = "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[@#$%^&+=!]).{8,}$";
+    return password != null && password.matches(passwordPattern);
     }
 }

@@ -105,6 +105,17 @@ public class GUIManager {
             }
         });
 
+        editorFrame.addNoteButton.addActionListener(new java.awt.event.ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String Username= User.userName ;
+                // title * password
+                String title = JOptionPane.showInputDialog("Enter Note Title: ");
+                SecureNote note = new SecureNote(title);
+                String password = note.setPassword(JOptionPane.showInputDialog("Enter Note Password"));
+            }
+        });
+
     }
 
     private void sketchFrameActions(){
@@ -141,3 +152,7 @@ public class GUIManager {
         sketchFrame.setVisible(true);
     }
 }
+
+/*
+
+ */
