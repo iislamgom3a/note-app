@@ -2,19 +2,38 @@ import java.io.*;
 import java.util.HashMap;
 import java.util.List;
 
+class PasswordException extends Exception {
+    public PasswordException(String message) {
+        super(message);
+    }
+}
+class WeakPasswordException extends Exception {
+    public WeakPasswordException(String message) {
+        super(message);
+    }
+}
+
+
 public class User {
 
     private List<Note> notes;
     static final String  FILE_NAME = "DataBase.txt";
-
-    public String register(String userName,String password,String password1) throws Exception {
-        HashMap<String,String> map1 = new HashMap<>();
-        String folderPath = "Users\\"+userName;
+    public String register(String userName, String password, String password1) throws PasswordException, WeakPasswordException {
+        HashMap<String, String> map1 = new HashMap<>();
+        String folderPath = "Users\\" + userName;
         map1 = readHashMapFromFile();
+
         if (!map1.containsKey(userName)) {
-            if (!validateAndComparePasswords(password,password1)) {
-                throw new Exception("Valid password");
+            // Check if the passwords match
+            if (!password.equals(password1)) {
+                throw new PasswordException("Passwords do not match!");
             }
+
+            // Check for weak password (example: length < 8, no numbers, etc.)
+            if (password.length() < 8 || !password.matches(".*\\d.*") || !password.matches(".*[a-zA-Z].*")) {
+                throw new WeakPasswordException("Password is too weak! It must be at least 8 characters long and contain both letters and numbers.");
+            }
+
             map1.put(userName, password);
             writeHashMapToFile(map1);
             File folder = new File(folderPath);
@@ -46,18 +65,27 @@ public class User {
         }
     }
 
-    public String logIn(String userName,String password) throws Exception {
-        HashMap<String,String> map = readHashMapFromFile();
-        if (map.containsKey(userName)){
-            if (map.get(userName).equals(password)){
-                return "Users\\"+userName;
-            }
-            else {
+    public String logIn(String userName, String password) throws Exception {
+        // Check for empty fields
+        if (userName == null || userName.isEmpty()) {
+            throw new Exception("Username cannot be empty");
+        }
+        if (password == null || password.isEmpty()) {
+            throw new Exception("Password cannot be empty");
+        }
+
+        HashMap<String, String> map = readHashMapFromFile();
+
+        if (map.containsKey(userName)) {
+            if (map.get(userName).equals(password)) {
+                return "Users\\" + userName;
+            } else {
                 throw new Exception("Wrong password");
             }
         }
-        throw new Exception("Username don't exist");
+        throw new Exception("Username doesn't exist");
     }
+
 
 
 

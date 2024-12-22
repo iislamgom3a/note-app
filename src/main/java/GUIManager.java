@@ -1,28 +1,124 @@
+import java.awt.event.ActionEvent;
 import javax.swing.*;
 
-public class GUIManager{
+public class GUIManager {
+    private LoginFrame loginFrame;
+    private RegisterFrame registerFrame;
+    private EditorFrame editorFrame;
+    private Sketch sketchFrame;
+    private User user;
 
-    public static void main(String[] args) {
-       LoginFrame loginFrame = new LoginFrame();
-        SwingUtilities.invokeLater(() -> {
-            loginFrame.setVisible(true);
+    public GUIManager() {
+        loginFrame = new LoginFrame();
+        registerFrame = new RegisterFrame();
+        editorFrame = new EditorFrame();
+        sketchFrame = new Sketch();
+        user = new User();
+        loginActions();
+        RegisterActions();
+
+    }
+    // login Actions
+    private void loginActions() {
+        // Register button Action
+        LoginFrame.RegisterButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                loginFrame.dispose();
+                // Create and show the register frame
+                showRegisterFrame();
+            }
+        });
+
+        // login Button Action
+        loginFrame.loginButton.addActionListener(new java.awt.event.ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                String userName = loginFrame.userNameTextField.getText();
+                String password = new String(loginFrame.passwordFiled.getPassword());
+                try {
+                    String userPath = user.logIn(userName, password);
+                    JOptionPane.showMessageDialog(null, "Login Successful!");
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(null, "Error: " + ex.getMessage());
+                }
+            }
         });
 
     }
+
+    // Register Actoins
+    private void RegisterActions() {
+        registerFrame.registerButton.addActionListener(new java.awt.event.ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                String userName = registerFrame.userNameTextField.getText();
+                String password = new String(registerFrame.passwrodField.getPassword());
+                String confirmedPassword = new String(registerFrame.confirmPasswordField.getPassword());
+
+                try {
+                    String userPath = user.register(userName, password, confirmedPassword);
+                    JOptionPane.showMessageDialog(null, "Register Successful!");
+                } catch (PasswordException ex) {
+                    JOptionPane.showMessageDialog(null, "Error: " + ex.getMessage());
+                } catch (WeakPasswordException ex) {
+                    JOptionPane.showMessageDialog(null, "Error: " + ex.getMessage());
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(null, "Error: " + ex.getMessage());
+                }
+            }
+
+        });
+        registerFrame.backToLogin.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                registerFrame.dispose();
+                showLoginFrame();
+            }
+        });
+    }
+    // Editor Actions
+    private void editorFrameActions(){
+        editorFrame.logOutButton.addActionListener(new java.awt.event.ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                editorFrame.dispose();
+                showLoginFrame();
+            }
+        });
+        editorFrame.addSketchButton.addActionListener(new java.awt.event.ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                showSketchFrame();
+            }
+        });
+    }
+
+    public void showLoginFrame() {
+        // Hide all frames first to avoid overlap
+        editorFrame.setVisible(false);
+        sketchFrame.setVisible(false);
+        loginFrame.setVisible(true);
+    }
+
+    public void showRegisterFrame() {
+        // Hide all frames first
+        loginFrame.setVisible(false);
+        editorFrame.setVisible(false);
+        sketchFrame.setVisible(false);
+        registerFrame.setVisible(true);
+    }
+
+    public void showEditorFrame() {
+        // Hide all frames first
+        loginFrame.setVisible(false);
+        registerFrame.setVisible(false);
+        sketchFrame.setVisible(false);
+        editorFrame.setVisible(true);
+    }
+
+    public void showSketchFrame() {
+        // Hide all frames first
+        loginFrame.setVisible(false);
+        registerFrame.setVisible(false);
+        sketchFrame.setVisible(true);
+    }
 }
-
-
-
-    /*
-     - login panel or register if the user is not found
-
-     --- if the user exists: open a panel which the notes at the left and the edit panel at the right
-     - when clicking a note it will ask for a password
-     - passed: the notes will be shown at the right, and it can be changed from the editing mode to view and vice versa
-     - when a note closed it will be locked after a time
-     - a button to add new note and asking for its new password
-
-     --- user isn't exits : new user
-     - same but there is no old notes there
-
-    */

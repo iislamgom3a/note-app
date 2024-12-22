@@ -1,11 +1,9 @@
-
-import javax.swing.*;
-import java.awt.*;
-
-public class App extends JFrame{
-public static void main(String[] args) {
-        javax.swing.SwingUtilities.invokeLater(() -> {
-            new LoginFrame().setVisible(true);
-        });
+public class App {
+    public static void main(String[] args) {
+        // Create an instance of GUIManager
+        GUIManager guiManager = new GUIManager();
+        // Show the login frame initially
+        guiManager.showLoginFrame();
     }
 }
+// finished : don't modify it
