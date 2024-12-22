@@ -4,7 +4,7 @@
 public class Anas {
     public static void main(String[] args) {
         User user = new User();
-        user.writeEmptyHashMapToFile();
+        user.writeEmptyHashMapToFile("X:\\Programming\\noteTakingApp\\Users");
     }
 }
 

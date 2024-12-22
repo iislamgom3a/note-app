@@ -56,7 +56,7 @@ public class RegisterFrame extends javax.swing.JFrame {
         loginPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
         registerButton.setText("Register");
-        confirmPasswordField.setText("Password");
+        confirmPasswordField.setText("");
 
         logo.setAlignment(java.awt.Label.CENTER);
         logo.setName("logo"); // NOI18N
@@ -73,7 +73,7 @@ public class RegisterFrame extends javax.swing.JFrame {
         registerWelcomeLablel.setName("programName"); // NOI18N
         registerWelcomeLablel.setText("welcome To AnnotateIt");
 
-        passwrodField.setText("Password");
+        passwrodField.setText("");
 
         confirmPasswordLabel.setAlignment(java.awt.Label.CENTER);
         confirmPasswordLabel.setName("logo"); // NOI18N
