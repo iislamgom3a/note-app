@@ -1,32 +1,92 @@
+import java.io.*;
+import java.security.MessageDigest;
 import java.util.HashMap;
+import java.util.List;
 
-public class SecureNote extends Note{
-    private String password;
+class SecureNote extends Note {
     private boolean unlocked;
-    public SecureNote( String title) {
+    private String title;
+
+    public SecureNote(String title) {
         super(title);
-    }
-    // method: ceate note:
-    // title, password
-    public String setPassword(String password){
-        return password;
-    }
-public static boolean isPasswordValid(String password) {
-    String passwordPattern = "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[@#$%^&+=!]).{8,}$";
-    return password != null && password.matches(passwordPattern);
-    }
-    public void saveTitleAndPassword(String title , String password) throws Exception {
-        HashMap<String,String> titlesAndPasswords = User.readHashMapFromFile();
-        String hashPassword = User.hashPassword(password);
-        if (titlesAndPasswords.containsKey(title)) {
-            throw new Exception("Username already exists.");
-        }
-        if (!User.isPasswordValid(password)) {
-            throw new WeakPasswordException("Password is too weak! It must be at least 8 characters long, contain both upper and lower case letters, a number, and a special character.");
-        }
-        String hashedPassword = User.hashPassword(password);
-        titlesAndPasswords.put(title, hashedPassword);
-        User.writeHashMapToFile(titlesAndPasswords);
+        this.title = title;
+        this.unlocked = false;
     }
 
+    public void createNote(String userName, String password) throws Exception {
+        if (userName == null || userName.isEmpty()) {
+            throw new IllegalArgumentException("User name cannot be null or empty.");
+        }
+
+        String userFolderPath = User.USERs_FOLDER_PATH + File.separator + userName;
+        File userDir = new File(userFolderPath);
+
+        // Ensure user directory exists
+        if (!userDir.exists()) {
+            userDir.mkdirs();
+        }
+
+        File titlesFile = new File(userFolderPath, "TitlesAndPasswords.txt");
+        HashMap<String, String> titlesAndPasswords = readTitlesAndPasswords(titlesFile.getPath());
+
+        if (titlesAndPasswords.containsKey(title)) {
+            throw new Exception("Note title already exists.");
+        }
+
+        titlesAndPasswords.put(title, User.hashPassword(password));
+        writeTitlesAndPasswords(titlesFile.getPath(), titlesAndPasswords);
+
+        try (FileWriter writer = new FileWriter(new File(userFolderPath, title + ".md"))) {
+            writer.write(""); // Optional initial content
+        } catch (IOException e) {
+            throw new RuntimeException("Error creating secure note file: " + e.getMessage());
+        }
+    }
+
+
+    public boolean isUnlocked() {
+        return unlocked;
+    }
+
+    public void unlock(String userName, String password) throws Exception {
+        String userFolderPath = User.USERs_FOLDER_PATH + File.separator + userName;
+        String filePath = userFolderPath + File.separator + "TitlesAndPasswords.txt";
+        HashMap<String, String> titlesAndPasswords = readTitlesAndPasswords(filePath);
+
+        if (!titlesAndPasswords.containsKey(title)) {
+            throw new Exception("Note not found.");
+        }
+
+        String storedHash = titlesAndPasswords.get(title);
+        if (storedHash.equals(User.hashPassword(password))) {
+            unlocked = true;
+        } else {
+            throw new Exception("Invalid password.");
+        }
+    }
+
+    public void lock() {
+        this.unlocked = false;
+    }
+
+    private HashMap<String, String> readTitlesAndPasswords(String filePath) {
+        HashMap<String, String> map = new HashMap<>();
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filePath))) {
+            map = (HashMap<String, String>) ois.readObject();
+        } catch (FileNotFoundException e) {
+            System.out.println("Titles and passwords file not found. A new one will be created.");
+        } catch (IOException | ClassNotFoundException e) {
+            System.err.println("Error reading titles and passwords file: " + e.getMessage());
+        }
+        return map == null ? new HashMap<>() : map;
+    }
+
+    private void writeTitlesAndPasswords(String filePath, HashMap<String, String> map) {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filePath))) {
+            oos.writeObject(map);
+            System.out.println("Titles and passwords updated successfully.");
+        } catch (IOException e) {
+            System.err.println("Error writing to titles and passwords file: " + e.getMessage());
+        }
+    }
 }

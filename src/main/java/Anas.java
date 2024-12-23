@@ -1,12 +1,12 @@
 //import javax.swing.*;
 //import java.io.File;
 //
-public class Anas {
-    public static void main(String[] args) {
-        User user = new User();
-        user.writeEmptyHashMapToFile("X:\\Programming\\noteTakingApp\\Users");
-    }
-}
+//public class Anas {
+//    public static void main(String[] args) {
+//        User user = new User();
+//        user.writeEmptyHashMapToFile("X:\\Programming\\noteTakingApp\\Users");
+//    }
+//}
 
 //private static void openFolderInFrame(String userName) {
 //    String folderPath = "Users\\" + userName;

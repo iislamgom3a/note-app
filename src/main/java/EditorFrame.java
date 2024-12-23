@@ -3,6 +3,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import org.commonmark.node.Node;
@@ -20,10 +21,15 @@ public class EditorFrame extends javax.swing.JFrame {
     private boolean isRawMode = true;
     private JPanel cardPanel;
     private CardLayout cardLayout;
+    private  String currentNote;
+    private  String currentNotePath;
 
-    public EditorFrame() {
+
+    public EditorFrame(String currentNote) {
         initComponents();
         initializeMarkdownEditor();
+        this.currentNote = currentNote;
+
     }
 
     private void initializeMarkdownEditor() {
@@ -57,7 +63,7 @@ public class EditorFrame extends javax.swing.JFrame {
         textArea.getDocument().addDocumentListener(new DocumentListener() {
             @Override
             public void insertUpdate(DocumentEvent e) {
-                saveToMarkdownFile();
+                saveToMarkdownFile(currentNote);
                 if (!isRawMode) {
                     updatePreview();
                 }
@@ -65,7 +71,7 @@ public class EditorFrame extends javax.swing.JFrame {
 
             @Override
             public void removeUpdate(DocumentEvent e) {
-                saveToMarkdownFile();
+                saveToMarkdownFile(currentNote);
                 if (!isRawMode) {
                     updatePreview();
                 }
@@ -73,7 +79,7 @@ public class EditorFrame extends javax.swing.JFrame {
 
             @Override
             public void changedUpdate(DocumentEvent e) {
-                saveToMarkdownFile();
+                saveToMarkdownFile(currentNote);
                 if (!isRawMode) {
                     updatePreview();
                 }
@@ -84,9 +90,9 @@ public class EditorFrame extends javax.swing.JFrame {
         updatePreview();
     }
 
-    private void saveToMarkdownFile() {
+    private void saveToMarkdownFile(String note) {
         String content = textArea.getText();
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter("note.md"))) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(User.USERs_FOLDER_PATH+ File.separator + note +".md", true))) {
             writer.write(content);
         } catch (IOException e) {
             e.printStackTrace();
@@ -259,9 +265,6 @@ public class EditorFrame extends javax.swing.JFrame {
     }
 
 
-    public static void main(String args[]) {
-        java.awt.EventQueue.invokeLater(() -> new EditorFrame().setVisible(true));
-    }
 
 
     protected javax.swing.JButton addImageButton;
