@@ -13,6 +13,7 @@ public class GUIManager {
     String currntUserName;
     private String currentNoteTitle;
 
+
     public GUIManager() {
         loginFrame = new LoginFrame();
         registerFrame = new RegisterFrame();
