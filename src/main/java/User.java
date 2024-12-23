@@ -45,9 +45,7 @@ public class User {
         if (userFolder.mkdir()) {
             String FilePath = "Users\\"+userName+"\\TitlesAndPasswords.txt";
             File file = new File(FilePath);
-            if (file.createNewFile()){
-                System.out.println("file created");
-            }
+            if (file.createNewFile()){}
             return userFolder.getAbsolutePath();
         } else {
             throw new Exception("Failed to create user folder.");
