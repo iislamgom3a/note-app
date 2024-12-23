@@ -1,6 +1,5 @@
 public class Note {
     private String title;
-
     // Constructor with parameters
     public Note(String title) {
         this.title = title;
@@ -15,4 +14,6 @@ public class Note {
     public void setTitle(String title) {
         this.title = title;
     }
+
+
 }
