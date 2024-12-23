@@ -1,5 +1,7 @@
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.*;
 import javax.swing.*;
 
 public class GUIManager {
@@ -8,19 +10,19 @@ public class GUIManager {
     private EditorFrame editorFrame;
     private Sketch sketchFrame;
     private User user;
+    String currntUserName;
     private String currentNoteTitle;
-
 
     public GUIManager() {
         loginFrame = new LoginFrame();
         registerFrame = new RegisterFrame();
-        editorFrame = new EditorFrame();
+        editorFrame = new EditorFrame(currentNoteTitle);
         sketchFrame = new Sketch();
-        user = new User();
         loginActions();
         RegisterActions();
         editorFrameActions();
     }
+
     // login Actions
     private void loginActions() {
         // Register button Action
@@ -33,45 +35,51 @@ public class GUIManager {
         });
 
         // login Button Action
-        loginFrame.loginButton.addActionListener(new java.awt.event.ActionListener() {
-
+        loginFrame.loginButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 String userName = loginFrame.userNameTextField.getText();
                 String password = new String(loginFrame.passwordFiled.getPassword());
                 try {
-                    String userPath = user.logIn(userName, password);
+                    User.logIn(userName, password);
                     JOptionPane.showMessageDialog(null, "Login Successful!");
-                    showEditorFrame();
+                    currntUserName = userName;
+                    loadUserObject(User.USERs_FOLDER_PATH + File.separator + userName); // Load user data before proceeding
+                    if (user != null) {
+                        showEditorFrame();
+                        System.out.println(user.toString());
+                        updateList();
+                    } else {
+                        JOptionPane.showMessageDialog(null, "User data could not be loaded.");
+                    }
                 } catch (Exception ex) {
                     JOptionPane.showMessageDialog(null, "Error: " + ex.getMessage());
                 }
             }
         });
-
     }
 
-    // Register Actoins
+    // Register Actions
     private void RegisterActions() {
         registerFrame.registerButton.addActionListener(new java.awt.event.ActionListener() {
-
             public void actionPerformed(ActionEvent e) {
                 String userName = registerFrame.userNameTextField.getText();
                 String password = new String(registerFrame.passwrodField.getPassword());
                 String confirmedPassword = new String(registerFrame.confirmPasswordField.getPassword());
 
                 try {
-                    String userPath = user.register(userName, password, confirmedPassword);
+                    User.register(userName, password, confirmedPassword);
+                    saveUserToFile(user);
                     JOptionPane.showMessageDialog(null, "Register Successful!");
-                } catch (PasswordException ex) {
-                    JOptionPane.showMessageDialog(null, "Error: " + ex.getMessage());
-                } catch (WeakPasswordException ex) {
+                    registerFrame.dispose();
+                    showLoginFrame();
+                } catch (PasswordException | WeakPasswordException ex) {
                     JOptionPane.showMessageDialog(null, "Error: " + ex.getMessage());
                 } catch (Exception ex) {
                     JOptionPane.showMessageDialog(null, "Error: " + ex.getMessage());
                 }
             }
-
         });
+
         registerFrame.backToLogin.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 registerFrame.dispose();
@@ -81,7 +89,7 @@ public class GUIManager {
     }
 
     // Editor Frame Actions
-    private void editorFrameActions(){
+    private void editorFrameActions() {
         editorFrame.logOutButton.addActionListener(new java.awt.event.ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -93,25 +101,22 @@ public class GUIManager {
             @Override
             public void actionPerformed(ActionEvent e) {
                 showSketchFrame();
+                updateList();
             }
         });
-        editorFrame.addNoteButton.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // to do
-            }
-        });
+
         editorFrame.addImageButton.addActionListener(new java.awt.event.ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Image handler = new Image();
-                String saveDirectoryPath = User.USER_FOLDER_PATH+User.userName;
-                String[] paths = handler.selectImage(saveDirectoryPath,currentNoteTitle);
+                String saveDirectoryPath = User.USERs_FOLDER_PATH + currntUserName;
+                String[] paths = handler.selectImage(saveDirectoryPath, currentNoteTitle);
 
                 if (paths != null && paths.length == 2) {
                     String imagePath = paths[0];
                     String markdownPath = paths[1];
                     handler.addImage(imagePath, markdownPath);
+                    updateList();
                 }
             }
         });
@@ -119,19 +124,36 @@ public class GUIManager {
         editorFrame.addNoteButton.addActionListener(new java.awt.event.ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String Username= User.userName ;
-                // title * password
-                String title = JOptionPane.showInputDialog("Enter Note Title: ");
-                SecureNote note = new SecureNote(title);
-                String password = note.setPassword(JOptionPane.showInputDialog("Enter Note Password"));
-                updateNoteListContent();
+                try {
+                    String title = JOptionPane.showInputDialog("Enter Note Title: ");
+                    if (title == null || title.isEmpty()) {
+                        JOptionPane.showMessageDialog(null, "Title cannot be empty.", "Error", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+
+                    SecureNote note = new SecureNote(title);
+                    String password = JOptionPane.showInputDialog("Enter Note Password");
+                    if (password == null || password.isEmpty()) {
+                        JOptionPane.showMessageDialog(null, "Password cannot be empty.", "Error", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+
+                    note.createNote(currntUserName, password);
+                    user.notes.add(note);
+                    updateList();
+                    JOptionPane.showMessageDialog(null, "Note created successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                } catch (WeakPasswordException ex) {
+                    JOptionPane.showMessageDialog(null, ex.getMessage(), "Weak Password", JOptionPane.ERROR_MESSAGE);
+                } catch (IOException ex) {
+                    JOptionPane.showMessageDialog(null, "Error writing the note file: " + ex.getMessage(), "File Error", JOptionPane.ERROR_MESSAGE);
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                }
             }
         });
-
     }
 
-    private void sketchFrameActions(){
-
+    private void sketchFrameActions() {
         editorFrame.notesList.addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting()) { // Ensures the event fires only after the selection is finalized
                 int selectedIndex = editorFrame.notesList.getSelectedIndex();
@@ -140,11 +162,9 @@ public class GUIManager {
                     // Handle the selection
                     System.out.println("Selected Note: " + selectedTitle);
                     currentNoteTitle = selectedTitle;
-                    // to do
                 }
             }
         });
-
     }
 
     public void showLoginFrame() {
@@ -176,28 +196,92 @@ public class GUIManager {
         registerFrame.setVisible(false);
         sketchFrame.setVisible(true);
     }
-    private void updateNoteListContent() {
-        // Create a DefaultListModel to hold the note titles
-        DefaultListModel<String> listModel = new DefaultListModel<>();
 
-        // Populate the list model with note titles
-        for (Note note : user.notes) { // Assuming `user.notes` is a list or similar collection
-            listModel.addElement(note.getTitle()); // No casting needed, assuming getTitle() returns a String
-        }
-
-        // Update the JList model
-        editorFrame.notesList.setModel(listModel);
-
-        // Ensure the scroll pane correctly displays the updated list
-        editorFrame.notesListPane.setViewportView(editorFrame.notesList);
+    private void updateList() {
+        updateNoteListContent(user.notes);
     }
 
+    public void updateNoteListContent(java.util.List<Note> notes) {
+        DefaultListModel<String> listModel = new DefaultListModel<>();
+
+        // Check if the notes list is empty
+        if (notes == null || notes.isEmpty()) {
+            listModel.addElement("No notes available.");
+        } else {
+            // Add all note titles to the list model
+            for (Note note : notes) {
+                listModel.addElement(note.getTitle());
+            }
+            for (Note note : notes) {
+                System.out.println("Note Title: " + note.getTitle());
+            }
+        }
+        editorFrame.notesList.setModel(listModel);
+        editorFrame.notesList.repaint(); // Ensure the JList updates visually
+    }
+
+    private void saveUserToFile(User user) {
+        // Define the directory and file path for the user data
+        String userDirectoryPath = User.USERs_FOLDER_PATH + File.separator + currntUserName;
+        String userFilePath = userDirectoryPath + File.separator + "user.txt";
+
+        try {
+            // Ensure the parent directory exists
+            File parentDir = new File(User.USERs_FOLDER_PATH);
+            if (!parentDir.exists()) {
+                parentDir.mkdirs(); // Create parent directories if they don't exist
+                System.out.println("Created parent directory: " + User.USERs_FOLDER_PATH);
+            }
+
+            // Create the user directory if it doesn't exist
+            File userDir = new File(userDirectoryPath);
+            if (!userDir.exists()) {
+                userDir.mkdirs(); // Create the directory if it doesn't exist
+                System.out.println("Created user directory: " + userDirectoryPath);
+            }
+
+            // Create the user file if it doesn't exist
+            File userFile = new File(userFilePath);
+            if (!userFile.exists()) {
+                userFile.createNewFile(); // Create the file if it doesn't exist
+                System.out.println("Created user file: " + userFilePath);
+            }
+
+            // Write the user object to the file using ObjectOutputStream
+            try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(userFile))) {
+                oos.writeObject(user);
+                System.out.println("User data saved to: " + userFilePath);
+            }
+
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(null, "Failed to save user data: " + e.getMessage(), "File Error", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        }
+    }
+
+    protected static User loadUserObject(String userPath) {
+        String userFilePath = userPath + File.separator + "user.txt";
+        File file = new File(userFilePath);
+
+        try {
+            if (file.exists()) {
+                ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file));
+                User user = (User) ois.readObject();
+                ois.close();
+
+                System.out.println("User data loaded successfully from: " + userFilePath);
+                if (user != null) {
+                    System.out.println("User loaded: " + user.toString());
+                }
+                return user;
+            } else {
+                System.out.println("User data file not found at: " + userFilePath);
+                return null; // Or return a default User object if required
+            }
+        } catch (IOException | ClassNotFoundException e) {
+            JOptionPane.showMessageDialog(null, "Error loading user data: " + e.getMessage(), "File Error", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+            return null; // Or return a default User object if required
+        }
+    }
 }
-
-
-
-
-
-/*
-
- */
