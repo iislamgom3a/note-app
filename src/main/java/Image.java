@@ -1,10 +1,7 @@
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
+import java.io.*;
+import java.nio.file.*;
 
 public class Image {
 
@@ -15,7 +12,7 @@ public class Image {
      * @param saveDirectoryPath The directory path where the image should be saved.
      * @return An array containing the image path and markdown file path, or null if no image is selected.
      */
-    public String[] selectImage(String saveDirectoryPath) {
+    public String[] selectImage(String saveDirectoryPath, String noteTitle) {
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setDialogTitle("Select an Image");
         FileNameExtensionFilter imageFilter = new FileNameExtensionFilter(
@@ -28,25 +25,25 @@ public class Image {
 
             File destinationDir = new File(saveDirectoryPath);
             if (!destinationDir.exists() && !destinationDir.mkdirs()) {
-                System.out.println("Failed to create the specified directory.");
+                JOptionPane.showMessageDialog(null, "Failed to create the specified directory.", "Error", JOptionPane.ERROR_MESSAGE);
                 return null;
             }
 
             File savedFile = new File(destinationDir, selectedFile.getName());
             try {
                 Files.copy(selectedFile.toPath(), savedFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-                System.out.println("Image saved to: " + savedFile.getAbsolutePath());
+                JOptionPane.showMessageDialog(null, "Image saved to: " + savedFile.getAbsolutePath(), "Success", JOptionPane.INFORMATION_MESSAGE);
 
                 // Markdown file path
-                File markdownFile = new File(destinationDir, "imagePaths.md");
+                File markdownFile = new File(destinationDir, noteTitle+".md");
 
                 return new String[]{savedFile.getAbsolutePath(), markdownFile.getAbsolutePath()};
             } catch (IOException e) {
-                System.out.println("Error copying file: " + e.getMessage());
+                JOptionPane.showMessageDialog(null, "Error copying file: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                 return null;
             }
         } else {
-            System.out.println("No image selected.");
+            JOptionPane.showMessageDialog(null, "No image selected.", "Info", JOptionPane.INFORMATION_MESSAGE);
             return null;
         }
     }
@@ -60,30 +57,35 @@ public class Image {
      */
     public boolean addImage(String imagePath, String markdownPath) {
         if (imagePath == null || imagePath.isEmpty() || markdownPath == null || markdownPath.isEmpty()) {
-            System.out.println("Invalid image or markdown path.");
+            JOptionPane.showMessageDialog(null, "Invalid image or markdown path.", "Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
 
-        try (FileWriter writer = new FileWriter(markdownPath, true)) {
-            writer.write("![Image](" + imagePath + ")\n");
-            System.out.println("Image path added to markdown file: " + markdownPath);
-            return true;
+        try {
+            // Check if the image path already exists in the Markdown file
+            File markdownFile = new File(markdownPath);
+            if (markdownFile.exists()) {
+                String content = Files.readString(markdownFile.toPath());
+                if (content.contains(imagePath)) {
+                    JOptionPane.showMessageDialog(null, "Image path already exists in the Markdown file.", "Info", JOptionPane.INFORMATION_MESSAGE);
+                    return false;
+                }
+            }
+
+            // Append the image path to the Markdown file
+            try (FileWriter writer = new FileWriter(markdownPath, true)) {
+                writer.write("![Image](" + imagePath + ")\n");
+                JOptionPane.showMessageDialog(null, "Image path added to Markdown file: " + markdownPath, "Success", JOptionPane.INFORMATION_MESSAGE);
+                return true;
+            }
         } catch (IOException e) {
-            System.out.println("Error writing to markdown file: " + e.getMessage());
+            JOptionPane.showMessageDialog(null, "Error writing to Markdown file: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
     }
 
     // Test the class functionality
     public static void main(String[] args) {
-        Image handler = new Image();
-        String saveDirectoryPath = System.getProperty("P:\\codeRepo") + "/CustomImages"; // Example user-specified path
-        String[] paths = handler.selectImage(saveDirectoryPath);
 
-        if (paths != null && paths.length == 2) {
-            String imagePath = paths[0];
-            String markdownPath = paths[1];
-            handler.addImage(imagePath, markdownPath);
-        }
     }
 }

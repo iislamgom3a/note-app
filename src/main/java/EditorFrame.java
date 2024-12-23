@@ -177,12 +177,7 @@ public class EditorFrame extends javax.swing.JFrame {
         notesLabel.setFont(new java.awt.Font("Segoe UI", 1, 14));
         notesLabel.setText("Notes");
 
-        notesList.setModel(new javax.swing.AbstractListModel<String>() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
-            public int getSize() { return strings.length; }
-            public String getElementAt(int i) { return strings[i]; }
-        });
-        notesListPane.setViewportView(notesList);
+
 
         logOutButton.setText("Log Out");
         addNoteButton.setText("Add Note"); // Set text for new button
@@ -276,7 +271,7 @@ public class EditorFrame extends javax.swing.JFrame {
     private javax.swing.JLabel notesLabel;
     protected javax.swing.JList<String> notesList;
     protected javax.swing.JButton logOutButton;
-    private javax.swing.JScrollPane notesListPane;
+    javax.swing.JScrollPane notesListPane;
     private javax.swing.JPanel notesPanel;
     private javax.swing.JButton toggleButton;
 }

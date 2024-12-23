@@ -1,3 +1,4 @@
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import javax.swing.*;
 
@@ -7,6 +8,8 @@ public class GUIManager {
     private EditorFrame editorFrame;
     private Sketch sketchFrame;
     private User user;
+    private String currentNoteTitle;
+
 
     public GUIManager() {
         loginFrame = new LoginFrame();
@@ -101,7 +104,15 @@ public class GUIManager {
         editorFrame.addImageButton.addActionListener(new java.awt.event.ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // to do
+                Image handler = new Image();
+                String saveDirectoryPath = User.USER_FOLDER_PATH+User.userName;
+                String[] paths = handler.selectImage(saveDirectoryPath,currentNoteTitle);
+
+                if (paths != null && paths.length == 2) {
+                    String imagePath = paths[0];
+                    String markdownPath = paths[1];
+                    handler.addImage(imagePath, markdownPath);
+                }
             }
         });
 
@@ -113,12 +124,26 @@ public class GUIManager {
                 String title = JOptionPane.showInputDialog("Enter Note Title: ");
                 SecureNote note = new SecureNote(title);
                 String password = note.setPassword(JOptionPane.showInputDialog("Enter Note Password"));
+                updateNoteListContent();
             }
         });
 
     }
 
     private void sketchFrameActions(){
+
+        editorFrame.notesList.addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting()) { // Ensures the event fires only after the selection is finalized
+                int selectedIndex = editorFrame.notesList.getSelectedIndex();
+                if (selectedIndex != -1) {
+                    String selectedTitle = editorFrame.notesList.getModel().getElementAt(selectedIndex);
+                    // Handle the selection
+                    System.out.println("Selected Note: " + selectedTitle);
+                    currentNoteTitle = selectedTitle;
+                    // to do
+                }
+            }
+        });
 
     }
 
@@ -151,7 +176,27 @@ public class GUIManager {
         registerFrame.setVisible(false);
         sketchFrame.setVisible(true);
     }
+    private void updateNoteListContent() {
+        // Create a DefaultListModel to hold the note titles
+        DefaultListModel<String> listModel = new DefaultListModel<>();
+
+        // Populate the list model with note titles
+        for (Note note : user.notes) { // Assuming `user.notes` is a list or similar collection
+            listModel.addElement(note.getTitle()); // No casting needed, assuming getTitle() returns a String
+        }
+
+        // Update the JList model
+        editorFrame.notesList.setModel(listModel);
+
+        // Ensure the scroll pane correctly displays the updated list
+        editorFrame.notesListPane.setViewportView(editorFrame.notesList);
+    }
+
 }
+
+
+
+
 
 /*
 
