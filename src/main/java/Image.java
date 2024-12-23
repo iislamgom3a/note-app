@@ -77,7 +77,7 @@ public class Image {
     // Test the class functionality
     public static void main(String[] args) {
         Image handler = new Image();
-        String saveDirectoryPath = System.getProperty("user.home") + "/CustomImages"; // Example user-specified path
+        String saveDirectoryPath = System.getProperty("P:\\codeRepo") + "/CustomImages"; // Example user-specified path
         String[] paths = handler.selectImage(saveDirectoryPath);
 
         if (paths != null && paths.length == 2) {
