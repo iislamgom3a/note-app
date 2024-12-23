@@ -43,6 +43,11 @@ public class User {
         String userFolderPath = USER_FOLDER_PATH + File.separator + userName;
         File userFolder = new File(userFolderPath);
         if (userFolder.mkdir()) {
+            String FilePath = "Users\\"+userName+"\\TitlesAndPasswords.txt";
+            File file = new File(FilePath);
+            if (file.createNewFile()){
+                System.out.println("file created");
+            }
             return userFolder.getAbsolutePath();
         } else {
             throw new Exception("Failed to create user folder.");
@@ -71,7 +76,7 @@ public class User {
         throw new Exception("User not found.");
     }
 
-    private static HashMap<String, String> readHashMapFromFile() {
+    protected static HashMap<String, String> readHashMapFromFile() {
         HashMap<String, String> map = new HashMap<>();
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(FILE_NAME))) {
             map = (HashMap<String, String>) ois.readObject();
@@ -83,7 +88,7 @@ public class User {
         return map == null ? new HashMap<>() : map;
     }
 
-    private static void writeHashMapToFile(HashMap<String, String> map) {
+    protected static void writeHashMapToFile(HashMap<String, String> map) {
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(FILE_NAME))) {
             oos.writeObject(map);
             System.out.println("Database updated successfully.");
