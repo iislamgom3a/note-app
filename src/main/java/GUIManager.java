@@ -18,6 +18,7 @@ public class GUIManager {
         registerFrame = new RegisterFrame();
         editorFrame = new EditorFrame(currentNoteTitle);
         sketchFrame = new Sketch();
+        user = new User();
         loginActions();
         RegisterActions();
         editorFrameActions();
@@ -67,7 +68,7 @@ public class GUIManager {
                 String confirmedPassword = new String(registerFrame.confirmPasswordField.getPassword());
 
                 try {
-                    User.register(userName, password, confirmedPassword);
+                    user.register(userName, password, confirmedPassword);
                     saveUserToFile(user);
                     JOptionPane.showMessageDialog(null, "Register Successful!");
                     registerFrame.dispose();
