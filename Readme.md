@@ -42,11 +42,5 @@ This project is a Secure Notes Application that allows users to create, store, a
 - Anas
 - Islam
 
-## Getting Started
-
-### Prerequisites
-
-- Java 8 or later
-- Any IDE supporting Java (e.g., IntelliJ IDEA, Eclipse)
 
 
