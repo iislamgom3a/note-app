@@ -39,8 +39,8 @@ This project is a Secure Notes Application that allows users to create, store, a
 - **Sketch**: Lets users draw sketches and save them to their notes.
 
 ## Authors
-@iislamgom3a
-@anas3654
+- @iislamgom3a
+- @anas3654
 
 
 
