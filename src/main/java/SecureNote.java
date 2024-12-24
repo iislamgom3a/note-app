@@ -1,16 +1,11 @@
 import java.io.*;
 import java.util.HashMap;
 
-class SecureNote implements Serializable {
+class SecureNote extends Note {
     private boolean unlocked = false;
-    private String title;
 
     public SecureNote(String title) {
-        this.title = title;
-    }
-
-    public String getTitle() {
-        return title;
+        super(title);
     }
 
     public void createNote(String userName, String password) throws Exception {
@@ -28,14 +23,14 @@ class SecureNote implements Serializable {
         File titlesFile = new File(userFolderPath, "TitlesAndPasswords.txt");
         HashMap<String, String> titlesAndPasswords = readTitlesAndPasswords(titlesFile.getPath());
 
-        if (titlesAndPasswords.containsKey(title)) {
+        if (titlesAndPasswords.containsKey(getTitle())) {
             throw new Exception("Note title already exists.");
         }
 
-        titlesAndPasswords.put(title, User.hashPassword(password));
+        titlesAndPasswords.put(getTitle(), User.hashPassword(password));
         writeTitlesAndPasswords(titlesFile.getPath(), titlesAndPasswords);
 
-        try (FileWriter writer = new FileWriter(new File(userFolderPath, title + ".md"))) {
+        try (FileWriter writer = new FileWriter(new File(userFolderPath, getTitle() + ".md"))) {
             writer.write(""); // Optional initial content
         } catch (IOException e) {
             throw new RuntimeException("Error creating secure note file: " + e.getMessage());
@@ -51,11 +46,11 @@ class SecureNote implements Serializable {
         String filePath = userFolderPath + File.separator + "TitlesAndPasswords.txt";
         HashMap<String, String> titlesAndPasswords = readTitlesAndPasswords(filePath);
 
-        if (!titlesAndPasswords.containsKey(title)) {
+        if (!titlesAndPasswords.containsKey(getTitle())) {
             throw new Exception("Note not found.");
         }
 
-        String storedHash = titlesAndPasswords.get(title);
+        String storedHash = titlesAndPasswords.get(getTitle());
         if (storedHash.equals(User.hashPassword(password))) {
             unlocked = true;
         } else {
