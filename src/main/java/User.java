@@ -1,5 +1,6 @@
 import java.io.*;
 import java.security.MessageDigest;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -15,9 +16,9 @@ class WeakPasswordException extends Exception {
     }
 }
 
-public class User {
+public class User implements Serializable{
 
-    protected List<Note> notes; // Assuming Note is another class in your project
+   // protected List<Note> notes = new ArrayList<>();
     static final String FILE_NAME = "DataBase.txt";
     protected static final String USERs_FOLDER_PATH = "P:\\codeRepo\\noteTakingApp\\Users";
 
@@ -46,6 +47,7 @@ public class User {
             String FilePath = "Users\\"+userName+"\\TitlesAndPasswords.txt";
             File file = new File(FilePath);
             if (file.createNewFile()) {
+                writeEmptyHashMapToFile(FilePath);
                 System.out.println("file created");
             }
             return userFolder.getAbsolutePath();
@@ -114,9 +116,9 @@ public class User {
         return hexString.toString();
     }
 
-    public void writeEmptyHashMapToFile() {
+    public static void writeEmptyHashMapToFile(String fileName) {
         HashMap<String, String> emptyHashMap = new HashMap<>();
-        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(FILE_NAME))) {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(fileName))) {
             oos.writeObject(emptyHashMap);
             System.out.println("Empty database created successfully.");
         } catch (IOException e) {

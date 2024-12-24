@@ -1,16 +1,16 @@
 import java.io.*;
-import java.security.MessageDigest;
 import java.util.HashMap;
-import java.util.List;
 
-class SecureNote extends Note {
-    private boolean unlocked;
+class SecureNote implements Serializable {
+    private boolean unlocked = false;
     private String title;
 
     public SecureNote(String title) {
-        super(title);
         this.title = title;
-        this.unlocked = false;
+    }
+
+    public String getTitle() {
+        return title;
     }
 
     public void createNote(String userName, String password) throws Exception {
@@ -21,7 +21,6 @@ class SecureNote extends Note {
         String userFolderPath = User.USERs_FOLDER_PATH + File.separator + userName;
         File userDir = new File(userFolderPath);
 
-        // Ensure user directory exists
         if (!userDir.exists()) {
             userDir.mkdirs();
         }
@@ -42,7 +41,6 @@ class SecureNote extends Note {
             throw new RuntimeException("Error creating secure note file: " + e.getMessage());
         }
     }
-
 
     public boolean isUnlocked() {
         return unlocked;

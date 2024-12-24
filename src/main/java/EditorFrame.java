@@ -6,37 +6,53 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+
 import org.commonmark.node.Node;
 import org.commonmark.parser.Parser;
 import org.commonmark.renderer.html.HtmlRenderer;
 
-/**
- *
- * @author IslamGomaa
- */
 public class EditorFrame extends javax.swing.JFrame {
 
-    private JTextArea textArea;
+    protected JTextArea textArea;
     private JEditorPane previewPane;
-    private boolean isRawMode = true;
+    protected boolean isRawMode = true;
     private JPanel cardPanel;
     private CardLayout cardLayout;
-    private  String currentNote;
-    private  String currentNotePath;
+    protected String currentNote;
+    protected JPanel imagePanel;
+    private JSplitPane mainSplitPane;
+    private JSplitPane editorImageSplitPane;
+    private final JPanel imageDisplayPanel;
+    protected String currnetUserName;
+    JScrollPane notesListPane ;
 
-
-    public EditorFrame(String currentNote) {
+    public EditorFrame() {
+        // إعداد imageDisplayPanel مع 3 صفوف و1 عمود
+        this.imageDisplayPanel = new JPanel(new GridLayout(3, 1, 10, 10)); // 1 column, 3 rows
         initComponents();
         initializeMarkdownEditor();
-        this.currentNote = currentNote;
-
+        setSize(1600, 900);
+        setLocationRelativeTo(null);
+        setResizable(false);
     }
 
+
     private void initializeMarkdownEditor() {
-        // Create the text area for raw markdown
+        imagePanel = new JPanel();
+       // imagePanel.setLayout(new FlowLayout());
+        imagePanel.setBorder(BorderFactory.createTitledBorder("Images & Sketches"));
+//        imagePanel.setPreferredSize(new Dimension(300, getHeight()));
+//
+//        // إضافة ScrollPane مع imageDisplayPanel
+//        JScrollPane imageScrollPane = new JScrollPane(imageDisplayPanel);
+//        imageScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+//        imageScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+//        imagePanel.add(imageScrollPane, BorderLayout.CENTER);
+
         textArea = new JTextArea();
         textArea.setEditable(true);
         textArea.setMargin(new Insets(10, 10, 10, 10));
+        textArea.setFont(new Font("Monospace", Font.PLAIN, 15));
 
         JScrollPane textScrollPane = new JScrollPane(textArea);
         textScrollPane.setPreferredSize(new Dimension(800, 600));
@@ -55,15 +71,19 @@ public class EditorFrame extends javax.swing.JFrame {
         cardPanel.add(textScrollPane, "Raw");
         cardPanel.add(previewScrollPane, "Preview");
 
-        // Add markdown editor to editorPanel
+        // Create split panes for layout
+        editorImageSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, cardPanel, imagePanel);
+        editorImageSplitPane.setResizeWeight(0.7);
+
+        // Add to editor panel
         editorPanel.setLayout(new BorderLayout());
-        editorPanel.add(cardPanel, BorderLayout.CENTER);
+        editorPanel.add(editorImageSplitPane, BorderLayout.CENTER);
 
         // Add auto-save listener
         textArea.getDocument().addDocumentListener(new DocumentListener() {
             @Override
             public void insertUpdate(DocumentEvent e) {
-                saveToMarkdownFile(currentNote);
+                saveToMarkdownFile(currentNote,currnetUserName);
                 if (!isRawMode) {
                     updatePreview();
                 }
@@ -71,7 +91,7 @@ public class EditorFrame extends javax.swing.JFrame {
 
             @Override
             public void removeUpdate(DocumentEvent e) {
-                saveToMarkdownFile(currentNote);
+                saveToMarkdownFile(currentNote, currnetUserName);
                 if (!isRawMode) {
                     updatePreview();
                 }
@@ -79,7 +99,7 @@ public class EditorFrame extends javax.swing.JFrame {
 
             @Override
             public void changedUpdate(DocumentEvent e) {
-                saveToMarkdownFile(currentNote);
+                saveToMarkdownFile(currentNote, currnetUserName);
                 if (!isRawMode) {
                     updatePreview();
                 }
@@ -90,36 +110,39 @@ public class EditorFrame extends javax.swing.JFrame {
         updatePreview();
     }
 
-    private void saveToMarkdownFile(String note) {
+    private void saveToMarkdownFile(String title, String currnetUserName) {
         String content = textArea.getText();
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(User.USERs_FOLDER_PATH+ File.separator + note +".md", true))) {
-            writer.write(content);
+        File noteFile = new File(User.USERs_FOLDER_PATH + File.separator + currnetUserName+File.separator+title + ".md");
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(noteFile))) {
+            writer.write(content); // Overwrite the file
         } catch (IOException e) {
             e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Error saving file: " + e.getMessage(),
+                    "Save Error", JOptionPane.ERROR_MESSAGE);
         }
     }
-    private void addImageToMarkdown() {
-        JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setDialogTitle("Select an Image");
-        fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("Image Files", "jpg", "png", "gif", "bmp"));
 
-        int userSelection = fileChooser.showOpenDialog(this);
-        if (userSelection == JFileChooser.APPROVE_OPTION) {
-            String imagePath = fileChooser.getSelectedFile().getAbsolutePath();
-            String markdownImage = String.format("![Image](%s)", imagePath);
 
-            // Insert the image markdown at the current cursor position
-            int cursorPosition = textArea.getCaretPosition();
-            textArea.insert(markdownImage, cursorPosition);
 
-            // Optionally, switch to preview mode to show the added image
-            if (!isRawMode) {
-                updatePreview();
+    protected void loadNoteContent(String noteName, String currnetUserName) {
+        File noteFile = new File(User.USERs_FOLDER_PATH + File.separator + currnetUserName+ File.separator+ noteName + ".md");
+        if (noteFile.exists()) {
+            try {
+                String content = new String(java.nio.file.Files.readAllBytes(noteFile.toPath()));
+                textArea.setText(content);
+            } catch (IOException e) {
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(this, "Error loading note: " + e.getMessage(),
+                        "Load Error", JOptionPane.ERROR_MESSAGE);
             }
+        } else {
+            textArea.setText(""); // Clear textArea if file doesn't exist
         }
     }
 
-    private void updatePreview() {
+
+
+    protected void updatePreview() {
         String rawMarkdown = textArea.getText();
         if (rawMarkdown.isEmpty()) {
             previewPane.setText("<html><body><p>No content to display.</p></body></html>");
@@ -129,6 +152,8 @@ public class EditorFrame extends javax.swing.JFrame {
                 previewPane.setText(htmlContent);
             } catch (Exception e) {
                 e.printStackTrace();
+                JOptionPane.showMessageDialog(this, "Error updating preview: " + e.getMessage(),
+                        "Preview Error", JOptionPane.ERROR_MESSAGE);
             }
         }
     }
@@ -149,132 +174,102 @@ public class EditorFrame extends javax.swing.JFrame {
         }
     }
 
-
     private void initComponents() {
         editorPanel = new javax.swing.JPanel();
         notesPanel = new javax.swing.JPanel();
         notesLabel = new javax.swing.JLabel();
         notesListPane = new javax.swing.JScrollPane();
-        notesList = new javax.swing.JList<>();
+        notesList = new JList<>();
         logOutButton = new javax.swing.JButton();
         addImageButton = new javax.swing.JButton();
         addSketchButton = new javax.swing.JButton();
         toggleButton = new javax.swing.JButton("Switch to Preview Mode");
-        addNoteButton = new javax.swing.JButton(); // New button
+        addNoteButton = new javax.swing.JButton();
 
+
+        notesList = new JList<>(new DefaultListModel<>());
+        notesList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        notesList.setVisibleRowCount(-1);
+        notesListPane.setViewportView(notesList);
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setResizable(false);
+        setResizable(true);
 
         editorPanel.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
-        javax.swing.GroupLayout editorPanelLayout = new javax.swing.GroupLayout(editorPanel);
-        editorPanel.setLayout(editorPanelLayout);
-        editorPanelLayout.setHorizontalGroup(
-                editorPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGap(0, 911, Short.MAX_VALUE) // Reduced width to accommodate larger notes panel
-        );
-        editorPanelLayout.setVerticalGroup(
-                editorPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGap(0, 648, Short.MAX_VALUE)
-        );
-
+        // Set preferred width for notes panel (adjust as needed)
+        notesPanel.setPreferredSize(new Dimension(200, getHeight()));
         notesPanel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
         notesLabel.setFont(new java.awt.Font("Segoe UI", 1, 14));
         notesLabel.setText("Notes");
 
-
-
         logOutButton.setText("Log Out");
-        addNoteButton.setText("Add Note"); // Set text for new button
-
-        javax.swing.GroupLayout notesPanelLayout = new javax.swing.GroupLayout(notesPanel);
-        notesPanel.setLayout(notesPanelLayout);
-        notesPanelLayout.setHorizontalGroup(
-                notesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(notesPanelLayout.createSequentialGroup()
-                                .addGroup(notesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addGroup(notesPanelLayout.createSequentialGroup()
-                                                .addGap(14, 14, 14)
-                                                .addGroup(notesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                                        .addComponent(notesListPane, javax.swing.GroupLayout.PREFERRED_SIZE, 265, javax.swing.GroupLayout.PREFERRED_SIZE) // Increased width
-                                                        .addComponent(notesLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 261, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                        .addGroup(notesPanelLayout.createSequentialGroup()
-                                                .addGap(47, 47, 47)
-                                                .addComponent(addNoteButton, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addGap(20, 20, 20)
-                                                .addComponent(logOutButton, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                .addContainerGap(10, Short.MAX_VALUE))
-        );
-        notesPanelLayout.setVerticalGroup(
-                notesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(notesPanelLayout.createSequentialGroup()
-                                .addContainerGap()
-                                .addComponent(notesLabel)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(notesListPane, javax.swing.GroupLayout.PREFERRED_SIZE, 621, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addGroup(notesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                        .addComponent(addNoteButton)
-                                        .addComponent(logOutButton))
-                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
+        addNoteButton.setText("Add Note");
         addImageButton.setText("Add Image");
         addSketchButton.setText("Add Sketch");
 
+        notesListPane.setViewportView(notesList);
         toggleButton.addActionListener(e -> toggleMode(toggleButton));
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(layout.createSequentialGroup()
-                                .addComponent(notesPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE) // Increased preferred width
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addGroup(layout.createSequentialGroup()
-                                                .addComponent(editorPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                                .addContainerGap())
-                                        .addGroup(layout.createSequentialGroup()
-                                                .addGap(320, 320, 320)
-                                                .addComponent(addImageButton, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(addSketchButton)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(toggleButton, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
-        );
-        layout.setVerticalGroup(
-                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(layout.createSequentialGroup()
+        GroupLayout notesPanelLayout = new GroupLayout(notesPanel);
+        notesPanel.setLayout(notesPanelLayout);
+// Horizontal Group
+        notesPanelLayout.setHorizontalGroup(
+                notesPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                        .addGroup(notesPanelLayout.createSequentialGroup()
                                 .addContainerGap()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(notesPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addGroup(layout.createSequentialGroup()
-                                                .addComponent(editorPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                                        .addComponent(addImageButton)
-                                                        .addComponent(addSketchButton)
-                                                        .addComponent(toggleButton))))
+                                .addGroup(notesPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                                        .addComponent(notesLabel)
+                                        .addComponent(notesListPane)
+                                        .addGroup(notesPanelLayout.createSequentialGroup()
+                                                .addComponent(addNoteButton)
+                                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(logOutButton)))
                                 .addContainerGap())
         );
 
-        pack();
+// Vertical Group
+        notesPanelLayout.setVerticalGroup(
+                notesPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                        .addGroup(notesPanelLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(notesLabel)
+                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(notesListPane)
+                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(notesPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                        .addComponent(addNoteButton)
+                                        .addComponent(logOutButton))
+                                .addContainerGap())
+        );
+
+        JScrollPane scrollableNotesPanel = new JScrollPane(notesPanel);
+        scrollableNotesPanel.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+
+        // Create button panel
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        buttonPanel.add(addImageButton);
+        buttonPanel.add(addSketchButton);
+        buttonPanel.add(toggleButton);
+
+        // Main content layout with BorderLayout
+        mainSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, scrollableNotesPanel, editorPanel);
+        mainSplitPane.setResizeWeight(0.3); // Adjust weight as needed (0 for fixed size)
+
+        // Main frame layout
+        getContentPane().setLayout(new BorderLayout());
+        getContentPane().add(mainSplitPane, BorderLayout.CENTER);
+        getContentPane().add(buttonPanel, BorderLayout.SOUTH);
     }
 
-
-
-
+    // Component declarations
     protected javax.swing.JButton addImageButton;
     protected javax.swing.JButton addSketchButton;
-    protected javax.swing.JButton addNoteButton; // New button declaration
-    private javax.swing.JPanel editorPanel;
+    protected javax.swing.JButton addNoteButton;
+    protected javax.swing.JPanel editorPanel;
     private javax.swing.JLabel notesLabel;
-    protected javax.swing.JList<String> notesList;
+    protected JList<String> notesList;
     protected javax.swing.JButton logOutButton;
-    javax.swing.JScrollPane notesListPane;
     private javax.swing.JPanel notesPanel;
     private javax.swing.JButton toggleButton;
+
 }

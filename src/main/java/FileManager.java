@@ -17,9 +17,14 @@ public class FileManager {
 
     public static boolean createFileIfNotExists(String filePath) throws IOException {
         File file = new File(filePath);
+        File parentDir = file.getParentFile();
+        if (parentDir != null && !parentDir.exists() && !parentDir.mkdirs()) {
+            throw new IOException("Failed to create parent directories: " + parentDir);
+        }
         if (!file.exists()) {
             return file.createNewFile();
         }
         return false;
     }
+
 }

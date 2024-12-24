@@ -11,6 +11,8 @@ public class Sketch extends JFrame {
     private ArrayList<StrokeShape> strokes;
     private Color currentColor;
     private int strokeThickness;
+    protected  JButton saveButton;
+    protected JPanel drawingPanel;
 
     public Sketch() {
         // Initialize the JFrame
@@ -24,7 +26,7 @@ public class Sketch extends JFrame {
         strokeThickness = 5;
 
         // Create a drawing panel
-        JPanel drawingPanel = new JPanel() {
+         drawingPanel = new JPanel() {
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
@@ -97,30 +99,25 @@ public class Sketch extends JFrame {
         controlPanel.add(clearButton);
 
         // Save button
-        JButton saveButton = new JButton("Save");
-        saveButton.addActionListener(e -> {
-            try {
-                saveImage(drawingPanel);
-                JOptionPane.showMessageDialog(this, "Image saved successfully!");
-            } catch (Exception ex) {
-                JOptionPane.showMessageDialog(this, "Failed to save the image: " + ex.getMessage());
-            }
-        });
+        saveButton = new JButton("Save");
+
         controlPanel.add(saveButton);
         add(controlPanel, BorderLayout.SOUTH);
         pack();
         setLocationRelativeTo(null);
     }
 
-    private void saveImage(JPanel panel) throws Exception {
+    protected String saveImage(JPanel panel, String userName) throws Exception {
         BufferedImage image = new BufferedImage(panel.getWidth(), panel.getHeight(), BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2d = image.createGraphics();
         panel.paint(g2d);
         g2d.dispose();
 
         // Save the image to a file
-        File outputFile = new File("sketch.png");
+        String filePath = User.USERs_FOLDER_PATH+ File.separator+ userName +File.separator+"sketch"+ Math.random()+".png";
+        File outputFile = new File(filePath);
         ImageIO.write(image, "png", outputFile);
+        return filePath;
     }
 
 

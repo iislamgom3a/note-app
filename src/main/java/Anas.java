@@ -1,33 +1,56 @@
-//import javax.swing.*;
-//import java.io.File;
-//
-//public class Anas {
-//    public static void main(String[] args) {
-//        User user = new User();
-//        user.writeEmptyHashMapToFile("X:\\Programming\\noteTakingApp\\Users");
-//    }
-//}
+import javax.swing.*;
+import javax.swing.GroupLayout;
+import javax.swing.LayoutStyle;
 
-//private static void openFolderInFrame(String userName) {
-//    String folderPath = "Users\\" + userName;
-//    File folder = new File(folderPath);
-//
-//    if (folder.exists() && folder.isDirectory()) {
-//        JFrame folderFrame = new JFrame("Folder: " + userName);
-//        folderFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-//        folderFrame.setSize(500, 400);
-//
-//        // Get list of files in the folder
-//        String[] files = folder.list();
-//        if (files == null) files = new String[]{};
-//
-//        JList<String> fileList = new JList<>(files);
-//        JScrollPane scrollPane = new JScrollPane(fileList);
-//
-//        folderFrame.add(scrollPane);
-//        folderFrame.setVisible(true);
-//
-//    } else {
-//        JOptionPane.showMessageDialog(null, "Folder does not exist: " + folderPath);
-//    }
-//}
+public class Anas {
+
+    public static void main(String[] args) {
+        // Create components
+        JPanel notesPanel = new JPanel();
+        JLabel notesLabel = new JLabel("Notes");
+        JScrollPane notesListPane = new JScrollPane();  // Assume this is a JScrollPane for a list
+        JButton addNoteButton = new JButton("Add Note");
+        JButton logOutButton = new JButton("Log Out");
+
+        // Layout for notes panel
+        GroupLayout notesPanelLayout = new GroupLayout(notesPanel);
+        notesPanel.setLayout(notesPanelLayout);
+        notesPanelLayout.setHorizontalGroup(
+                notesPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                        .addGroup(notesPanelLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(notesPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                                        .addComponent(notesLabel)
+                                        .addComponent(notesListPane)
+                                        .addGroup(notesPanelLayout.createSequentialGroup()
+                                                .addComponent(addNoteButton)
+                                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(logOutButton)))
+                                .addContainerGap())
+        );
+        notesPanelLayout.setVerticalGroup(
+                notesPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                        .addGroup(notesPanelLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(notesLabel)
+                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(notesListPane)
+                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(notesPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                        .addComponent(addNoteButton)
+                                        .addComponent(logOutButton))
+                                .addContainerGap())
+        );
+
+        // Wrap the notesPanel in a JScrollPane to make it scrollable
+        JScrollPane scrollableNotesPanel = new JScrollPane(notesPanel);
+        scrollableNotesPanel.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+
+        // Create a frame and add the JScrollPane
+        JFrame frame = new JFrame("Scrollable Notes Panel");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(400, 400);
+        frame.add(scrollableNotesPanel);
+        frame.setVisible(true);
+    }
+}
