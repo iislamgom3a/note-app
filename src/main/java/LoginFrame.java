@@ -221,8 +221,7 @@ public class LoginFrame extends javax.swing.JFrame  {
             showPasswordToggle.setText("Show");
         }
     }
-    
-   
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     protected static javax.swing.JButton  RegisterButton;
     private javax.swing.JFrame jFrame1;

@@ -76,7 +76,6 @@ public class GUIManager {
             }
         });
     }
-
     // Register Actions
     private void RegisterActions() {
         registerFrame.registerButton.addActionListener(new java.awt.event.ActionListener() {
@@ -107,7 +106,6 @@ public class GUIManager {
             }
         });
     }
-
     // Editor Frame Actions
     private void editorFrameActions() {
         editorFrame.logOutButton.addActionListener(e -> {
@@ -198,7 +196,6 @@ public class GUIManager {
         updateList();
     }
 
-
     private void sketchFrameActions(){
         sketchFrame.saveButton.addActionListener(e -> {
             try {
@@ -245,6 +242,7 @@ public class GUIManager {
         registerFrame.setVisible(false);
         sketchFrame.setVisible(true);
     }
+
     private void showImageSelctionFrame(){
         Images image = new Images();
         String imagePath = image.addImage(currntUserName);
@@ -276,88 +274,6 @@ public class GUIManager {
         // Ensure the list is repainted with the updated model
         editorFrame.notesList.repaint();
     }
-
-//    private void updateImagePanel() {
-//        // Clear existing components from the images panel
-//        editorFrame.imagePanel.removeAll();
-//
-//        // Get the list of image paths for the current note
-//        List<String> paths = imagesPaths.get(currentNoteTitle);
-//
-//        if (paths != null && !paths.isEmpty()) {
-//            try {
-//                // Load the first image from the list
-//                String path = paths.get(0);
-//                ImageIcon imageIcon = new ImageIcon(path);
-//                JLabel imageLabel = new JLabel();
-//                imageLabel.setIcon(imageIcon);
-//
-//                // Add the image label to the panel
-//                editorFrame.imagePanel.add(imageLabel);
-//
-//                // Optional: Add click functionality to view full image
-//                imageLabel.addMouseListener(new MouseAdapter() {
-//                    @Override
-//                    public void mouseClicked(MouseEvent e) {
-//                        JOptionPane.showMessageDialog(null, new ImageIcon(path), "Image Viewer", JOptionPane.PLAIN_MESSAGE);
-//                    }
-//                });
-//
-//            } catch (Exception ex) {
-//                System.err.println("Error loading image: " + ex.getMessage());
-//            }
-//        } else {
-//            // If no images are available, display a placeholder or message
-//            editorFrame.imagePanel.add(new JLabel("No images available."));
-//        }
-//
-//        // Refresh the images panel to display the updated content
-//        editorFrame.imagePanel.revalidate();
-//        editorFrame.imagePanel.repaint();
-//    }
-
-
-
-//private void updateImagePanel() {
-//    // Clear existing components from the images panel
-//    editorFrame.imagePanel.removeAll();
-//
-//    // Get the list of image paths for the current note
-//    List<String> paths = imagesPaths.get(currentNoteTitle);
-//
-//    if (paths != null && !paths.isEmpty()) {
-//        try {
-//            for (String path : paths) {
-//                // Load each image
-//                ImageIcon imageIcon = new ImageIcon(path);
-//                JLabel imageLabel = new JLabel();
-//                ImageIcon scaledIcon = new ImageIcon(imageIcon.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH));
-//                imageLabel.setIcon(scaledIcon);
-//                imageLabel.setIcon(imageIcon);
-//
-//
-//                editorFrame.imagePanel.add(imageLabel);
-//
-//                // Optional: Add click functionality to view full image
-//                imageLabel.addMouseListener(new MouseAdapter() {
-//                    @Override
-//                    public void mouseClicked(MouseEvent e) {
-//                        JOptionPane.showMessageDialog(null, new ImageIcon(path), "Image Viewer", JOptionPane.PLAIN_MESSAGE);
-//                    }
-//                });
-//            }
-//        } catch (Exception ex) {
-//            System.err.println("Error loading image: " + ex.getMessage());
-//        }
-//    } else {
-//        // If no images are available, display a placeholder or message
-//        editorFrame.imagePanel.add(new JLabel("No images available."));
-//    }
-//
-//    // Refresh the images panel to display the updated content
-//    editorFrame.imagePanel.revalidate();
-//    editorFrame.imagePanel.repaint();
-//}
 
     private void updateImagePanel() {
         editorFrame.imagePanel.removeAll(); // Clear existing components
@@ -419,9 +335,7 @@ public class GUIManager {
         editorFrame.imagePanel.repaint();
     }
 
-
-
-    String imagesHashpath = User.USERs_FOLDER_PATH + File.separator + currntUserName + File.separator + "imagesPaths.txt";
+    private String imagesHashpath = User.USERs_FOLDER_PATH + File.separator + currntUserName + File.separator + "imagesPaths.txt";
 
     private void loadImagesHash() throws IOException, ClassNotFoundException {
         String path = User.USERs_FOLDER_PATH + File.separator + currntUserName + File.separator + "imagesPaths.txt";
@@ -438,6 +352,7 @@ public class GUIManager {
         ensureDirectoryExists(path);
         FileManager.saveToFile(path, imagesPaths);
     }
+
     private void ensureDirectoryExists(String filePath) throws IOException {
         File file = new File(filePath);
         File parentDir = file.getParentFile();
@@ -446,15 +361,12 @@ public class GUIManager {
         }
     }
 
-
     private  void loadTitleList(){
             String userFolderPath = User.USERs_FOLDER_PATH + File.separator + currntUserName;
             File titlesFile = new File(userFolderPath, "TitlesAndPasswords.txt");
             HashMap<String, String> titlesAndPasswords = readTitlesAndPasswords(titlesFile.getPath());
             titles = new ArrayList<>(titlesAndPasswords.keySet());
         }
-
-
 
     private HashMap<String, String> readTitlesAndPasswords(String filePath) {
         HashMap<String, String> map = new HashMap<>();

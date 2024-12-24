@@ -1,0 +1,129 @@
+//https://claude.site/artifacts/a7f3284c-5644-464d-a555-3b1b2a5d6076
+
+@startuml
+    class App {
+        +main(args: String[]) void$
+    }
+
+    class GUIManager {
+        -loginFrame: LoginFrame
+        -registerFrame: RegisterFrame
+        -editorFrame: EditorFrame
+        -sketchFrame: Sketch
+        -user: User
+        -currntUserName: String
+        -currentNoteTitle: String
+        -titles: List~String~
+        -note: SecureNote
+        -imagesPaths: HashMap~String, List~String~~
+        +GUIManager()
+        -loginActions() void
+        -RegisterActions() void
+        -editorFrameActions() void
+        -sketchFrameActions() void
+        +showLoginFrame() void
+        +showRegisterFrame() void
+        +showEditorFrame() void
+        +showSketchFrame() void
+        -updateList() void
+        -updateImagePanel() void
+    }
+
+    class EditorFrame {
+        #textArea: JTextArea
+        -previewPane: JEditorPane
+        #isRawMode: boolean
+        #currentNote: String
+        #imagePanel: JPanel
+        #currnetUserName: String
+        +EditorFrame()
+        -initializeMarkdownEditor() void
+        #loadNoteContent(noteName: String, currnetUserName: String) void
+        #updatePreview() void
+    }
+
+    class FileManager {
+        +saveToFile(filePath: String, data: Object) void$
+        +loadFromFile(filePath: String) Object$
+        +createFileIfNotExists(filePath: String) boolean$
+    }
+
+    class Note {
+        -String title
+        +Note(title: String)
+        +getTitle(): String
+        +setTitle(title: String): void
+    }
+
+    class SecureNote {
+        -boolean unlocked
+        +SecureNote(title: String)
+        +createNote(userName: String, password: String): void
+        +isUnlocked(): boolean
+        +unlock(userName: String, password: String): void
+        +lock(): void
+        -readTitlesAndPasswords(filePath: String): HashMap
+        -writeTitlesAndPasswords(filePath: String, map: HashMap): void
+    }
+
+    class User {
+        +static FILE_NAME: String$
+        +static USERs_FOLDER_PATH: String$
+        +static register(userName: String, password: String, password1: String): String$
+        +static logIn(userName: String, password: String): String$
+        #static readHashMapFromFile(): HashMap$
+        #static writeHashMapToFile(map: HashMap): void$
+        +static isPasswordValid(password: String): boolean$
+        +static hashPassword(password: String): String$
+    }
+
+    class Sketch {
+        -strokes: ArrayList~StrokeShape~
+        -currentColor: Color
+        -strokeThickness: int
+        #saveButton: JButton
+        #drawingPanel: JPanel
+        +Sketch()
+        #saveImage(panel: JPanel, userName: String): String
+    }
+
+    class LoginFrame {
+        #static RegisterButton: JButton
+        #loginButton: JButton
+        #passwordFiled: JPasswordField
+        #userNameTextField: JTextField
+        -initComponents(): void
+    }
+
+    class RegisterFrame {
+        #backToLogin: JButton
+        #confirmPasswordField: JPasswordField
+        #registerButton: JButton
+        #passwrodField: JPasswordField
+        #userNameTextField: JTextField
+        -initComponents(): void
+    }
+
+    class Images {
+        +static SCALE_SMOOTH: int$
+        #addImage(userName: String): String
+        -getFileExtension(file: File): String
+    }
+
+    Note <|-- SecureNote
+    JFrame <|-- LoginFrame
+    JFrame <|-- RegisterFrame
+    JFrame <|-- Sketch
+    JFrame <|-- EditorFrame
+    App --> GUIManager
+    GUIManager --> EditorFrame
+    GUIManager --> LoginFrame
+    GUIManager --> RegisterFrame
+    GUIManager --> Sketch
+    GUIManager --> SecureNote
+    GUIManager --> User
+    GUIManager --> Images
+    EditorFrame --> FileManager
+    SecureNote --> FileManager
+    User --> FileManager
+@enduml

@@ -122,8 +122,6 @@ public class EditorFrame extends javax.swing.JFrame {
         }
     }
 
-
-
     protected void loadNoteContent(String noteName, String currnetUserName) {
         File noteFile = new File(User.USERs_FOLDER_PATH + File.separator + currnetUserName+ File.separator+ noteName + ".md");
         if (noteFile.exists()) {
@@ -139,8 +137,6 @@ public class EditorFrame extends javax.swing.JFrame {
             textArea.setText(""); // Clear textArea if file doesn't exist
         }
     }
-
-
 
     protected void updatePreview() {
         String rawMarkdown = textArea.getText();
