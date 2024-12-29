@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 public class Sketch extends JFrame {
 
-    private ArrayList<StrokeShape> strokes;
+    protected ArrayList<StrokeShape> strokes;
     private Color currentColor;
     private int strokeThickness;
     protected  JButton saveButton;

@@ -6,13 +6,22 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-
+// API for markdown format rendering
 import org.commonmark.node.Node;
 import org.commonmark.parser.Parser;
 import org.commonmark.renderer.html.HtmlRenderer;
 
 public class EditorFrame extends javax.swing.JFrame {
-
+    // Component declarations
+    protected javax.swing.JButton addImageButton;
+    protected javax.swing.JButton addSketchButton;
+    protected javax.swing.JButton addNoteButton;
+    protected javax.swing.JPanel editorPanel;
+    private javax.swing.JLabel notesLabel;
+    protected JList<String> notesList;
+    protected javax.swing.JButton logOutButton;
+    private javax.swing.JPanel notesPanel;
+    private javax.swing.JButton toggleButton;
     protected JTextArea textArea;
     private JEditorPane previewPane;
     protected boolean isRawMode = true;
@@ -25,9 +34,9 @@ public class EditorFrame extends javax.swing.JFrame {
     private final JPanel imageDisplayPanel;
     protected String currnetUserName;
     JScrollPane notesListPane ;
+    // End of Component declarations
 
     public EditorFrame() {
-        // إعداد imageDisplayPanel مع 3 صفوف و1 عمود
         this.imageDisplayPanel = new JPanel(new GridLayout(3, 1, 10, 10)); // 1 column, 3 rows
         initComponents();
         initializeMarkdownEditor();
@@ -39,15 +48,7 @@ public class EditorFrame extends javax.swing.JFrame {
 
     private void initializeMarkdownEditor() {
         imagePanel = new JPanel();
-       // imagePanel.setLayout(new FlowLayout());
         imagePanel.setBorder(BorderFactory.createTitledBorder("Images & Sketches"));
-//        imagePanel.setPreferredSize(new Dimension(300, getHeight()));
-//
-//        // إضافة ScrollPane مع imageDisplayPanel
-//        JScrollPane imageScrollPane = new JScrollPane(imageDisplayPanel);
-//        imageScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-//        imageScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-//        imagePanel.add(imageScrollPane, BorderLayout.CENTER);
 
         textArea = new JTextArea();
         textArea.setEditable(true);
@@ -105,18 +106,16 @@ public class EditorFrame extends javax.swing.JFrame {
                 }
             }
         });
-
         // Initialize the preview pane with default content
         updatePreview();
     }
 
     private void saveToMarkdownFile(String title, String currnetUserName) {
         String content = textArea.getText();
-        File noteFile = new File(User.USERs_FOLDER_PATH + File.separator + currnetUserName+File.separator+title + ".md");
+        File noteFile = new File(User.USERs_FOLDER_PATH + File.separator + currnetUserName+ File.separator+title + ".md");
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(noteFile))) {
             writer.write(content); // Overwrite the file
         } catch (IOException e) {
-            e.printStackTrace();
             JOptionPane.showMessageDialog(this, "Error saving file: " + e.getMessage(),
                     "Save Error", JOptionPane.ERROR_MESSAGE);
         }
@@ -129,7 +128,6 @@ public class EditorFrame extends javax.swing.JFrame {
                 String content = new String(java.nio.file.Files.readAllBytes(noteFile.toPath()));
                 textArea.setText(content);
             } catch (IOException e) {
-                e.printStackTrace();
                 JOptionPane.showMessageDialog(this, "Error loading note: " + e.getMessage(),
                         "Load Error", JOptionPane.ERROR_MESSAGE);
             }
@@ -147,7 +145,6 @@ public class EditorFrame extends javax.swing.JFrame {
                 String htmlContent = convertMarkdownToHtml(rawMarkdown);
                 previewPane.setText(htmlContent);
             } catch (Exception e) {
-                e.printStackTrace();
                 JOptionPane.showMessageDialog(this, "Error updating preview: " + e.getMessage(),
                         "Preview Error", JOptionPane.ERROR_MESSAGE);
             }
@@ -257,15 +254,5 @@ public class EditorFrame extends javax.swing.JFrame {
         getContentPane().add(buttonPanel, BorderLayout.SOUTH);
     }
 
-    // Component declarations
-    protected javax.swing.JButton addImageButton;
-    protected javax.swing.JButton addSketchButton;
-    protected javax.swing.JButton addNoteButton;
-    protected javax.swing.JPanel editorPanel;
-    private javax.swing.JLabel notesLabel;
-    protected JList<String> notesList;
-    protected javax.swing.JButton logOutButton;
-    private javax.swing.JPanel notesPanel;
-    private javax.swing.JButton toggleButton;
 
 }

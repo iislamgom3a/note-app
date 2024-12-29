@@ -20,7 +20,7 @@ public class User implements Serializable{
 
    // protected List<Note> notes = new ArrayList<>();
     static final String FILE_NAME = "DataBase.txt";
-    protected static final String USERs_FOLDER_PATH = "Users";
+    protected static final String USERs_FOLDER_PATH = "P:\\codeRepo\\noteTakingApp\\Users";
 
     public static String register(String userName, String password, String password1) throws PasswordException, WeakPasswordException, Exception {
         HashMap<String, String> userDatabase = readHashMapFromFile();

@@ -9,6 +9,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.CancellationException;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
@@ -67,6 +68,8 @@ public class GUIManager {
                     if (user != null) {
                         showEditorFrame();
                         updateList();
+                        updateImagePanel();
+                        editorFrame.textArea.repaint();
                     } else {
                         JOptionPane.showMessageDialog(null, "User data could not be loaded.");
                     }
@@ -109,6 +112,10 @@ public class GUIManager {
     // Editor Frame Actions
     private void editorFrameActions() {
         editorFrame.logOutButton.addActionListener(e -> {
+
+            currentNoteTitle= null;
+            editorFrame.currnetUserName = null;
+            editorFrame.currentNote = null;
             editorFrame.dispose();
             showLoginFrame();
         });
@@ -127,7 +134,6 @@ public class GUIManager {
                     JOptionPane.showMessageDialog(null, "Password cannot be empty.", "Error", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
-
                 note.createNote(currntUserName, password);
                 loadTitleList();
                 updateList();
@@ -183,6 +189,7 @@ public class GUIManager {
             Images imageHandler = new Images();
             String imagePath = imageHandler.addImage(currntUserName);
             imagesPaths.computeIfAbsent(currentNoteTitle, k -> new ArrayList<>()).add(imagePath);
+            System.out.println(imagePath+ "Added successfully to imagesPaths map");
             try {
                 saveImagesHash();
             } catch (IOException ex) {
@@ -201,13 +208,14 @@ public class GUIManager {
             try {
                 String imagePath = sketchFrame.saveImage(sketchFrame.drawingPanel, currntUserName);
                 imagesPaths.computeIfAbsent(currentNoteTitle, k -> new ArrayList<>()).add(imagePath);
-                //JOptionPane.showMessageDialog(this, "Image saved successfully!");
-                updateImagePanel();
-                System.out.println("Image saved successfully! to "+imagePath);
+                saveImagesHash();
+                System.out.println("Sketch  saved successfully! to "+imagePath);
                 sketchFrame.setVisible(false);
+                sketchFrame.strokes.clear();
+                sketchFrame.drawingPanel.repaint();
+                updateImagePanel();
             } catch (Exception ex) {
-               // JOptionPane.showMessageDialog(this, "Failed to save the image: " + ex.getMessage());
-                System.out.println("ailed to save the image");
+                System.out.println("Failed to save the image");
             }
         });
     }
