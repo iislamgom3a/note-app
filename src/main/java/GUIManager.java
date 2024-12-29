@@ -112,10 +112,6 @@ public class GUIManager {
     // Editor Frame Actions
     private void editorFrameActions() {
         editorFrame.logOutButton.addActionListener(e -> {
-
-            currentNoteTitle= null;
-            editorFrame.currnetUserName = null;
-            editorFrame.currentNote = null;
             editorFrame.dispose();
             showLoginFrame();
         });
