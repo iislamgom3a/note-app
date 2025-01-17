@@ -1,4 +1,3 @@
-import com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatAtomOneDarkIJTheme;
 import com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatMaterialDarkerIJTheme;
 
 public class App {
@@ -9,10 +8,10 @@ public class App {
             e.printStackTrace();
         }
         // Launch your GUI here
-      javax.swing.SwingUtilities.invokeLater(() -> {
+        javax.swing.SwingUtilities.invokeLater(() -> {
             GUIManager guiManager = new GUIManager();
             // Show the login frame initially
             guiManager.showLoginFrame();
-     });
+        });
     }
 }
