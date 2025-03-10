@@ -1,6 +1,6 @@
 # Secure Notes Application
 
-This project is a Secure Notes Application that allows users to create, store, and view secure notes. The notes can be protected by passwords, and the application provides a simple editor and sketching tool for enhancing the notes.
+This project is a Secure Notes Application that allows users to create, store, and view secure notes. The notes can be protected by passwords, and the application provides a simple editor and sketching tool.
 
 ## Features
 - **User Registration and Login**: Users can create an account and log in using a username and password.
@@ -25,18 +25,6 @@ This project is a Secure Notes Application that allows users to create, store, a
 - **LoginFrame**: GUI component for user login.
 - **RegisterFrame**: GUI component for user registration.
 - **Images**: Handles adding and managing images in the notes.
-
-### Class Relationships
-- `Note` is extended by `SecureNote`, adding functionality for password protection.
-- `LoginFrame`, `RegisterFrame`, `EditorFrame`, and `Sketch` extend `JFrame` to provide the graphical user interface components.
-- `App` class is the entry point, which instantiates and manages the `GUIManager`.
-
-### Key Components
-
-- **SecureNote**: This class provides the mechanism to lock and unlock notes, ensuring that users' sensitive data is protected.
-- **FileManager**: Provides methods to save, load, and ensure file existence for storing user data and notes.
-- **EditorFrame**: Allows users to create notes with rich text support (markdown).
-- **Sketch**: Lets users draw sketches and save them to their notes.
 
 ## Authors
 - @iislamgom3a
