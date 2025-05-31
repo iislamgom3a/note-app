@@ -26,9 +26,10 @@ This project is a Secure Notes Application that allows users to create, store, a
 - **RegisterFrame**: GUI component for user registration.
 - **Images**: Handles adding and managing images in the notes.
 
+ ## screenshots
+![alt text](</attachments/2025-05-31 07_20_53-Microsoft Store.png>) ![alt text](</attachments/2025-05-31 07_26_48-Microsoft Store.png>)  ![alt text](</attachments/2025-05-31 07_29_55-Microsoft Store.png>)
+
 ## Authors
-- @iislamgom3a
-- @anas3654
 
-
-
+- [Islam Gomaa](https://github.com/Islam-Gom3a)
+- [Anas Osama](https://github.com/anas3654/)
