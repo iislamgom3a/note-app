@@ -31,5 +31,5 @@ This project is a Secure Notes Application that allows users to create, store, a
 
 ## Authors
 
-- [Islam Gomaa](https://github.com/Islam-Gom3a)
+- [Islam Gomaa](https://github.com/iislamgom3a)
 - [Anas Osama](https://github.com/anas3654/)
